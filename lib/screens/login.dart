@@ -137,8 +137,8 @@ class _LoginState extends State<Login> {
 
   onPressedFacebookLogin() async {
     try {
-      final facebookLogin =
-          await FacebookAuth.instance.login(loginBehavior: LoginBehavior.webOnly);
+      final facebookLogin = await FacebookAuth.instance
+          .login(loginBehavior: LoginBehavior.webOnly);
 
       if (facebookLogin.status == LoginStatus.success) {
         // get the user data
@@ -601,19 +601,19 @@ class _LoginState extends State<Login> {
                             ),
                           ),
                         ),
-                        if (allow_twitter_login.$)
-                          Padding(
-                            padding: const EdgeInsets.only(left: 15.0),
-                            child: InkWell(
-                              onTap: () {
-                                onPressedTwitterLogin();
-                              },
-                              child: Container(
-                                width: 28,
-                                child: Image.asset("assets/twitter_logo.png"),
-                              ),
-                            ),
-                          ),
+                        // if (allow_twitter_login.$)
+                        //   Padding(
+                        //     padding: const EdgeInsets.only(left: 15.0),
+                        //     child: InkWell(
+                        //       onTap: () {
+                        //         onPressedTwitterLogin();
+                        //       },
+                        //       child: Container(
+                        //         width: 28,
+                        //         child: Image.asset("assets/twitter_logo.png"),
+                        //       ),
+                        //     ),
+                        //   ),
                         /* if (Platform.isIOS)
                           Padding(
                             padding: const EdgeInsets.only(left: 15.0),
