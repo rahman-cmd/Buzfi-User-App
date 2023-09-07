@@ -67,23 +67,21 @@ class _SplashScreenState extends State<SplashScreen> {
     return Container(
       width: DeviceInfo(context).height,
       height: DeviceInfo(context).height,
-      color: MyTheme.splash_screen_color,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            MyTheme.splash_screen_color,
+            MyTheme.splash_screen_color_tow
+          ],
+          begin: Alignment.bottomLeft,
+          end: Alignment.topRight,
+          // transform: top corner to bottom corner
+          transform: GradientRotation(-1.5708),
+        ),
+      ),
       child: InkWell(
         child: Stack(
-          // mainAxisAlignment: MainAxisAlignment.start,
-          // crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            CircleAvatar(
-              backgroundColor: Colors.transparent,
-              child: Hero(
-                tag: "backgroundImageInSplash",
-                child: Container(
-                  child: Image.asset(
-                      "assets/splash_login_registration_background_image.png"),
-                ),
-              ),
-              radius: 140.0,
-            ),
             Positioned.fill(
               top: DeviceInfo(context).height! / 2 - 72,
               child: Column(
@@ -93,70 +91,20 @@ class _SplashScreenState extends State<SplashScreen> {
                     child: Hero(
                       tag: "splashscreenImage",
                       child: Container(
-                        height: 72,
-                        width: 72,
+                        height: 180,
+                        width: 180,
                         padding:
                             EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                        decoration: BoxDecoration(
-                            color: MyTheme.white,
-                            borderRadius: BorderRadius.circular(8)),
                         child: Image.asset(
-                          "assets/splash_screen_logo.png",
+                          "assets/sp_logo.png",
                           filterQuality: FilterQuality.low,
                         ),
                       ),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 5.0),
-                    child: Text(
-                      AppConfig.app_name,
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14.0,
-                          color: Colors.white),
-                    ),
-                  ),
-                  Text(
-                    "V " + _packageInfo.version,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14.0,
-                      color: Colors.white,
-                    ),
-                  ),
                 ],
               ),
             ),
-            Positioned.fill(
-              child: Align(
-                alignment: Alignment.bottomCenter,
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 51.0),
-                  child: Text(
-                    AppConfig.copyright_text,
-                    style: TextStyle(
-                      fontWeight: FontWeight.w400,
-                      fontSize: 13.0,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-/*
-            Padding(
-              padding: const EdgeInsets.only(top: 120.0),
-              child: Container(
-                  width: double.infinity,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-
-                    ],
-                  )),
-            ),*/
           ],
         ),
       ),
