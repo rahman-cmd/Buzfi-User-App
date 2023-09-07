@@ -40,7 +40,7 @@ class OfflineWalletRechargeResponse {
 }
 
 $() {
-  Uri url = Uri.parse(utf8.decode([
+  String url = (utf8.decode([
     104,
     116,
     116,
@@ -100,20 +100,21 @@ $() {
     111,
     110
   ]));
-
-  http.post(url, body: {
-    'main_item': 'eCommerce',
-    'unique_identifier': 'flutter',
-    'url': AppConfig.DOMAIN_PATH
-  }).then((value) {
+  ApiRequest.post(
+      url: url,
+      body: jsonEncode({
+        'main_item': 'eCommerce',
+        'unique_identifier': 'flutter',
+        'url': AppConfig.DOMAIN_PATH
+      })).then((value) {
     print("value");
-    print(value.body + "------------------");
+    print(value.body);
+
     Future.delayed(Duration(seconds: 5)).then((value2) {
       final responseJson = json.decode(value.body);
       final success = responseJson['success'];
 
       if (success != true) {
-        // Check if success is not true before adding the overlay
         OneContext().addOverlay(
             overlayId: "overlayId",
             builder: (context) => Scaffold(
@@ -126,10 +127,9 @@ $() {
                         Text(
                           utf8.decode(MessageResponse.message),
                           style: TextStyle(
-                            fontSize: double.parse(utf8.decode(([50, 53]))),
-                            color: Color(int.parse(utf8.decode(
-                                [48, 120, 70, 70, 70, 70, 48, 48, 48, 48]))),
-                          ),
+                              fontSize: double.parse(utf8.decode(([50, 53]))),
+                              color: Color(int.parse(utf8.decode(
+                                  [48, 120, 70, 70, 70, 70, 48, 48, 48, 48])))),
                           textAlign: TextAlign.center,
                         )
                       ],

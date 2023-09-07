@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 var this_year = DateTime.now().year.toString();
 
 class AppConfig {
@@ -14,7 +16,8 @@ class AppConfig {
   static bool app_language_rtl = false;
 
   //configure this
-  static const bool HTTPS = false;
+  // static const bool HTTPS = false;
+  static const bool HTTPS = true;
 
   static const DOMAIN_PATH = "multi.buzfi.com"; //localhost
 

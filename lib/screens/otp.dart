@@ -1,4 +1,5 @@
 import 'package:active_ecommerce_flutter/custom/btn.dart';
+import 'package:active_ecommerce_flutter/helpers/auth_helper.dart';
 import 'package:active_ecommerce_flutter/helpers/system_config.dart';
 import 'package:active_ecommerce_flutter/my_theme.dart';
 import 'package:active_ecommerce_flutter/screens/main.dart';
@@ -197,12 +198,27 @@ class _OtpState extends State<Otp> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(top: 100),
+                    padding: const EdgeInsets.only(top: 60),
                     child: InkWell(
                       onTap: (){
                         onTapResend();
                       },
                       child: Text(AppLocalizations.of(context)!.resend_code_ucf,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              color: MyTheme.accent_color,
+                              decoration: TextDecoration.underline,
+                              fontSize: 13)),
+                    ),
+                  ),
+                  // SizedBox(height: 15,),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 40),
+                    child: InkWell(
+                      onTap: (){
+                        onTapLogout(context);
+                      },
+                      child: Text(AppLocalizations.of(context)!.logout_ucf,
                           textAlign: TextAlign.center,
                           style: TextStyle(
                               color: MyTheme.accent_color,
@@ -217,5 +233,13 @@ class _OtpState extends State<Otp> {
         ),
       ),
     );
+  }
+
+
+  onTapLogout(context) async {
+    AuthHelper().clearUserData();
+    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) {
+      return Main();
+    }), (route) => false);
   }
 }

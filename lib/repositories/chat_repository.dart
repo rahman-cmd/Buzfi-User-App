@@ -6,7 +6,6 @@ import 'package:active_ecommerce_flutter/data_model/message_response.dart';
 import 'package:active_ecommerce_flutter/helpers/shared_value_helper.dart';
 import 'package:active_ecommerce_flutter/middlewares/banned_user.dart';
 import 'package:active_ecommerce_flutter/repositories/api-request.dart';
-
 import '../data_model/conversation_create_response.dart';
 
 class ChatRepository {
@@ -59,15 +58,15 @@ class ChatRepository {
 
   Future<dynamic> getNewMessageResponse(
       {required conversation_id, required last_message_id}) async {
-    String url =
-        ("${AppConfig.BASE_URL}/chat/get-new-messages/${conversation_id}/${last_message_id}");
-    final response = await ApiRequest.get(
-        url: url,
-        headers: {
-          "Authorization": "Bearer ${access_token.$}",
-          "App-Language": app_language.$!
-        },
-        middleware: BannedUser());
+    String url=(
+        "${AppConfig.BASE_URL}/chat/get-new-messages/${conversation_id}/${last_message_id}");
+    final response = await ApiRequest.get(url:url,
+      headers: {
+        "Authorization": "Bearer ${access_token.$}",
+        "App-Language": app_language.$!
+      },
+      middleware: BannedUser()
+    );
     return messageResponseFromJson(response.body);
   }
 

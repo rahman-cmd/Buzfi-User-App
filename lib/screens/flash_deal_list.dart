@@ -1,22 +1,19 @@
 import 'package:active_ecommerce_flutter/custom/box_decorations.dart';
 import 'package:active_ecommerce_flutter/custom/device_info.dart';
 import 'package:active_ecommerce_flutter/custom/lang_text.dart';
+import 'package:active_ecommerce_flutter/custom/toast_component.dart';
 import 'package:active_ecommerce_flutter/custom/useful_elements.dart';
 import 'package:active_ecommerce_flutter/data_model/flash_deal_response.dart';
-import 'package:active_ecommerce_flutter/helpers/shimmer_helper.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:active_ecommerce_flutter/my_theme.dart';
-import 'package:flutter_countdown_timer/index.dart';
-import 'package:active_ecommerce_flutter/custom/toast_component.dart';
-import 'package:toast/toast.dart';
-import 'package:active_ecommerce_flutter/screens/flash_deal_products.dart';
-import 'package:active_ecommerce_flutter/repositories/flash_deal_repository.dart';
-import 'package:shimmer/shimmer.dart';
-import 'package:active_ecommerce_flutter/app_config.dart';
+import 'package:active_ecommerce_flutter/helpers/main_helpers.dart';
 import 'package:active_ecommerce_flutter/helpers/shared_value_helper.dart';
+import 'package:active_ecommerce_flutter/helpers/shimmer_helper.dart';
+import 'package:active_ecommerce_flutter/my_theme.dart';
+import 'package:active_ecommerce_flutter/repositories/flash_deal_repository.dart';
+import 'package:active_ecommerce_flutter/screens/flash_deal_products.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_countdown_timer/index.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'dart:async';
+import 'package:toast/toast.dart';
 
 class FlashDealList extends StatefulWidget {
   @override
@@ -35,7 +32,8 @@ class _FlashDealListState extends State<FlashDealList> {
   Widget build(BuildContext context) {
     print("object");
     return Directionality(
-      textDirection: app_language_rtl.$! ? TextDirection.rtl : TextDirection.ltr,
+      textDirection:
+          app_language_rtl.$! ? TextDirection.rtl : TextDirection.ltr,
       child: Scaffold(
         appBar: buildAppBar(context),
         body: buildFlashDealList(context),
@@ -43,18 +41,19 @@ class _FlashDealListState extends State<FlashDealList> {
     );
   }
 
- Widget buildFlashDealList(context) {
+  Widget buildFlashDealList(context) {
     return FutureBuilder<FlashDealResponse>(
         future: FlashDealRepository().getFlashDeals(),
-        builder: (context,AsyncSnapshot<FlashDealResponse> snapshot) {
+        builder: (context, AsyncSnapshot<FlashDealResponse> snapshot) {
           if (snapshot.hasError) {
             //snapshot.hasError
             //print("flashDeal error");
             //print(snapshot.error.toString());
-            return Center(child: Text("Network Error!"),);
-          }else
-            if (snapshot.hasData) {
-              //snapshot.hasData
+            return Center(
+              child: Text("Network Error!"),
+            );
+          } else if (snapshot.hasData) {
+            //snapshot.hasData
             FlashDealResponse flashDealResponse = snapshot.data!;
             return SingleChildScrollView(
               child: ListView.separated(
@@ -80,25 +79,25 @@ class _FlashDealListState extends State<FlashDealList> {
 
   CustomScrollView buildShimmer() {
     return CustomScrollView(
-            slivers: [
-              SliverToBoxAdapter(
-                child: ListView.separated(
-                  separatorBuilder: (context, index) {
-                    return SizedBox(
-                      height: 20,
-                    );
-                  },
-                  itemCount: 20,
-                  scrollDirection: Axis.vertical,
-                  physics: NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemBuilder: (context, index) {
-                    return buildFlashDealListItemShimmer();
-                  },
-                ),
-              )
-            ],
-          );
+      slivers: [
+        SliverToBoxAdapter(
+          child: ListView.separated(
+            separatorBuilder: (context, index) {
+              return SizedBox(
+                height: 20,
+              );
+            },
+            itemCount: 20,
+            scrollDirection: Axis.vertical,
+            physics: NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemBuilder: (context, index) {
+              return buildFlashDealListItemShimmer();
+            },
+          ),
+        )
+      ],
+    );
   }
 
   String timeText(String txt, {default_length = 3}) {
@@ -152,11 +151,9 @@ class _FlashDealListState extends State<FlashDealList> {
             onTap: () {
               if (time == null) {
                 ToastComponent.showDialog(
-                    AppLocalizations.of(context)!
-                        .flash_deal_has_ended,
-                    gravity: Toast.center,
-                    duration: Toast.lengthLong,
-
+                  AppLocalizations.of(context)!.flash_deal_has_ended,
+                  gravity: Toast.center,
+                  duration: Toast.lengthLong,
                 );
               } else {
                 Navigator.push(context, MaterialPageRoute(builder: (context) {
@@ -171,7 +168,7 @@ class _FlashDealListState extends State<FlashDealList> {
             },
             child: Stack(
               children: [
-                buildFlashDealBanner( flashDealResponse, index),
+                buildFlashDealBanner(flashDealResponse, index),
                 Positioned(
                   bottom: 0,
                   left: 0,
@@ -187,8 +184,7 @@ class _FlashDealListState extends State<FlashDealList> {
                           child: Center(
                               child: time == null
                                   ? Text(
-                                      AppLocalizations.of(context)!
-                                          .ended_ucf,
+                                      AppLocalizations.of(context)!.ended_ucf,
                                       style: TextStyle(
                                           color: MyTheme.accent_color,
                                           fontSize: 16.0,
@@ -210,9 +206,10 @@ class _FlashDealListState extends State<FlashDealList> {
                               alignment: WrapAlignment.start,
 
                               children: List.generate(
-                                   flashDealResponse.flashDeals![index].products!.products!.length,
-                                      (productIndex) {
-                                return buildFlashDealsProductItem(flashDealResponse,index,productIndex);
+                                  flashDealResponse.flashDeals![index].products!
+                                      .products!.length, (productIndex) {
+                                return buildFlashDealsProductItem(
+                                    flashDealResponse, index, productIndex);
                               }),
                             ),
                           ),
@@ -233,7 +230,7 @@ class _FlashDealListState extends State<FlashDealList> {
     return Container(
       // color: MyTheme.amber,
       height: 340,
-      child:Stack(
+      child: Stack(
         children: [
           buildFlashDealBannerShimmer(),
           Positioned(
@@ -263,11 +260,9 @@ class _FlashDealListState extends State<FlashDealList> {
                         runAlignment: WrapAlignment.spaceBetween,
                         alignment: WrapAlignment.start,
 
-                        children: List.generate(
-                            6,
-                                (productIndex) {
-                              return buildFlashDealsProductItemShimmer();
-                            }),
+                        children: List.generate(6, (productIndex) {
+                          return buildFlashDealsProductItemShimmer();
+                        }),
                       ),
                     ),
                   )
@@ -280,7 +275,8 @@ class _FlashDealListState extends State<FlashDealList> {
     );
   }
 
-  Widget buildFlashDealsProductItem(flashDealResponse, flashDealIndex,productIndex) {
+  Widget buildFlashDealsProductItem(
+      flashDealResponse, flashDealIndex, productIndex) {
     return Container(
       margin: EdgeInsets.only(left: 10),
       height: 50,
@@ -297,19 +293,28 @@ class _FlashDealListState extends State<FlashDealList> {
             clipBehavior: Clip.none,
             child: FadeInImage(
               placeholder: AssetImage("assets/placeholder.png"),
-              image: NetworkImage(flashDealResponse.flashDeals[flashDealIndex].products.products[productIndex].image),
-
+              image: NetworkImage(flashDealResponse.flashDeals[flashDealIndex]
+                  .products.products[productIndex].image),
             ),
-            borderRadius: BorderRadius.only(topLeft: Radius.circular(6),bottomLeft: Radius.circular(6),),
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(6),
+              bottomLeft: Radius.circular(6),
+            ),
           ),
           Padding(
             padding: const EdgeInsets.only(left: 10.0),
-            child: Text(flashDealResponse.flashDeals[flashDealIndex].products.products[productIndex].price,style: TextStyle(fontSize: 13,color: MyTheme.accent_color,fontWeight: FontWeight.bold),),
+            child: Text(
+              convertPrice(flashDealResponse.flashDeals[flashDealIndex].products
+                  .products[productIndex].price),
+              style: TextStyle(
+                  fontSize: 13,
+                  color: MyTheme.accent_color,
+                  fontWeight: FontWeight.bold),
+            ),
           )
         ],
       ),
     );
-
   }
 
   Widget buildFlashDealsProductItemShimmer() {
@@ -327,19 +332,26 @@ class _FlashDealListState extends State<FlashDealList> {
         children: [
           Container(
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.only(topLeft: Radius.circular(6),bottomLeft: Radius.circular(6),),
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(6),
+                bottomLeft: Radius.circular(6),
+              ),
             ),
-            child: ShimmerHelper().buildBasicShimmerCustomRadius(height: 50,width: 50,radius:BorderRadius.only(topLeft: Radius.circular(6),bottomLeft: Radius.circular(6),),
-          ),),
+            child: ShimmerHelper().buildBasicShimmerCustomRadius(
+              height: 50,
+              width: 50,
+              radius: BorderRadius.only(
+                topLeft: Radius.circular(6),
+                bottomLeft: Radius.circular(6),
+              ),
+            ),
+          ),
           Padding(
-            padding: const EdgeInsets.only(left: 10.0),
-            child:ShimmerHelper().buildBasicShimmer(height: 15,width: 60)
-
-          )
+              padding: const EdgeInsets.only(left: 10.0),
+              child: ShimmerHelper().buildBasicShimmer(height: 15, width: 60))
         ],
       ),
     );
-
   }
 
   Container buildFlashDealBanner(flashDealResponse, index) {
@@ -356,10 +368,9 @@ class _FlashDealListState extends State<FlashDealList> {
 
   Widget buildFlashDealBannerShimmer() {
     return ShimmerHelper().buildBasicShimmerCustomRadius(
-      width: DeviceInfo(context).width,
-      height: 180,
-      color: MyTheme.medium_grey_50
-    );
+        width: DeviceInfo(context).width,
+        height: 180,
+        color: MyTheme.medium_grey_50);
   }
 
   Widget buildTimerRowRow(CurrentRemainingTime time) {
@@ -466,21 +477,35 @@ class _FlashDealListState extends State<FlashDealList> {
           SizedBox(
             width: 10,
           ),
-
-            ShimmerHelper().buildBasicShimmerCustomRadius(height: 30,width: 30,radius: BorderRadius.circular(6),color: MyTheme.shimmer_base),
-
+          ShimmerHelper().buildBasicShimmerCustomRadius(
+              height: 30,
+              width: 30,
+              radius: BorderRadius.circular(6),
+              color: MyTheme.shimmer_base),
           SizedBox(
             width: 4,
           ),
-          ShimmerHelper().buildBasicShimmerCustomRadius(height: 30,width: 30,radius: BorderRadius.circular(6),color: MyTheme.shimmer_base),
+          ShimmerHelper().buildBasicShimmerCustomRadius(
+              height: 30,
+              width: 30,
+              radius: BorderRadius.circular(6),
+              color: MyTheme.shimmer_base),
           SizedBox(
             width: 4,
           ),
-          ShimmerHelper().buildBasicShimmerCustomRadius(height: 30,width: 30,radius: BorderRadius.circular(6),color: MyTheme.shimmer_base),
+          ShimmerHelper().buildBasicShimmerCustomRadius(
+              height: 30,
+              width: 30,
+              radius: BorderRadius.circular(6),
+              color: MyTheme.shimmer_base),
           SizedBox(
             width: 4,
           ),
-          ShimmerHelper().buildBasicShimmerCustomRadius(height: 30,width: 30,radius: BorderRadius.circular(6),color: MyTheme.shimmer_base),
+          ShimmerHelper().buildBasicShimmerCustomRadius(
+              height: 30,
+              width: 30,
+              radius: BorderRadius.circular(6),
+              color: MyTheme.shimmer_base),
           SizedBox(
             width: 10,
           ),
@@ -539,7 +564,10 @@ class _FlashDealListState extends State<FlashDealList> {
       ),
       title: Text(
         AppLocalizations.of(context)!.flash_deals_ucf,
-        style: TextStyle(fontSize: 16, color: MyTheme.dark_font_grey,fontWeight: FontWeight.bold),
+        style: TextStyle(
+            fontSize: 16,
+            color: MyTheme.dark_font_grey,
+            fontWeight: FontWeight.bold),
       ),
       elevation: 0.0,
       titleSpacing: 0,

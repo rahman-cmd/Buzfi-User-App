@@ -21,7 +21,6 @@ import 'package:active_ecommerce_flutter/screens/wallet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:active_ecommerce_flutter/my_theme.dart';
 import 'package:shared_value/shared_value.dart';
 import 'dart:async';
@@ -191,18 +190,16 @@ class _MyAppState extends State<MyApp> {
               primaryColor: MyTheme.white,
               scaffoldBackgroundColor: MyTheme.white,
               visualDensity: VisualDensity.adaptivePlatformDensity,
+              fontFamily: "PublicSansSerif",
               /*textTheme: TextTheme(
               bodyText1: TextStyle(),
               bodyText2: TextStyle(fontSize: 12.0),
             )*/
               //
               // the below code is getting fonts from http
-              textTheme: GoogleFonts.publicSansTextTheme(textTheme).copyWith(
-                bodyText1:
-                    GoogleFonts.publicSans(textStyle: textTheme.bodyText1),
-                bodyText2: GoogleFonts.publicSans(
-                    textStyle: textTheme.bodyText2, fontSize: 12),
-              ),
+              textTheme: MyTheme.textTheme1,
+              // textTheme: TextTheme()
+              fontFamilyFallback: ['NotoSans'],
             ),
             localizationsDelegates: [
               GlobalMaterialLocalizations.delegate,

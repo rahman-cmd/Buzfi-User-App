@@ -85,7 +85,6 @@ class AIZRoute {
 
 
   static bool _isMailVerifiedRoute(Widget widget) {
-    print(widget.runtimeType);
 bool mailVerifiedRoute =false;
     mailVerifiedRoute = <Type>[
       SelectAddress,

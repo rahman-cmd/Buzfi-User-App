@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:active_ecommerce_flutter/app_config.dart';
 import 'package:active_ecommerce_flutter/custom/toast_component.dart';
 import 'package:active_ecommerce_flutter/helpers/shared_value_helper.dart';
@@ -13,7 +15,7 @@ import 'package:toast/toast.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class OnlinePay extends StatefulWidget {
-  String title;
+  String? title;
   double? amount;
   String payment_type;
   String? payment_method_key;
@@ -21,7 +23,7 @@ class OnlinePay extends StatefulWidget {
   OnlinePay(
       {Key? key,
       this.amount = 0.00,
-      this.title = "",
+      this.title = "Pay With Instamojo",
       this.payment_type = "",
       this.package_id = "0",
       this.payment_method_key = ""})
@@ -66,6 +68,7 @@ class _OnlinePayState extends State<OnlinePay> {
   }
 
   pay(url) {
+    print(url);
     _webViewController
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setBackgroundColor(const Color(0x00000000))
@@ -105,6 +108,7 @@ class _OnlinePayState extends State<OnlinePay> {
               }
             }
             if (page.contains("/online-pay/failed")) {
+              getData();
               Navigator.pop(context);
             }
           },
@@ -114,6 +118,32 @@ class _OnlinePayState extends State<OnlinePay> {
           headers: {"Authorization": "Bearer ${access_token.$}"});
     _initial_url_fetched = true;
     setState(() {});
+  }
+
+  void getData() {
+    _webViewController
+        .runJavaScriptReturningResult("document.body.innerText")
+        .then((data) {
+      // var decodedJSON = jsonDecode(data);
+      var responseJSON = jsonDecode(data as String);
+
+      if (responseJSON.runtimeType == String) {
+        responseJSON = jsonDecode(responseJSON);
+      }
+      ToastContext().init(context);
+      Toast.show(
+        responseJSON["message"],
+        backgroundColor: MyTheme.white,
+        textStyle: TextStyle(
+            color: MyTheme.font_grey,
+            fontSize: 14,
+            fontWeight: FontWeight.w500),
+        border: Border.all(color: MyTheme.medium_grey),
+        backgroundRadius: 8,
+        duration: 3,
+        gravity: Toast.center,
+      );
+    });
   }
 
   @override
@@ -220,7 +250,7 @@ class _OnlinePayState extends State<OnlinePay> {
         ),
       ),
       title: Text(
-        widget.title,
+        widget.title!,
         style: TextStyle(fontSize: 16, color: MyTheme.accent_color),
       ),
       elevation: 0.0,

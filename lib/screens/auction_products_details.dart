@@ -34,6 +34,7 @@ import 'package:social_share/social_share.dart';
 import 'package:toast/toast.dart';
 
 import '../app_config.dart';
+import '../helpers/main_helpers.dart';
 import '../repositories/auction_products_repository.dart';
 
 class AuctionProductsDetails extends StatefulWidget {
@@ -154,7 +155,8 @@ class _AuctionProductsDetailsState extends State<AuctionProductsDetails>
         .getAuctionProductsDetails(id: widget.id);
 
     if (auctionproductDetailsResponse.auction_product!.length > 0) {
-      _auctionproductDetails = auctionproductDetailsResponse.auction_product![0];
+      _auctionproductDetails =
+          auctionproductDetailsResponse.auction_product![0];
       sellerChatTitleController.text =
           auctionproductDetailsResponse.auction_product![0].name!;
     }
@@ -214,8 +216,10 @@ class _AuctionProductsDetailsState extends State<AuctionProductsDetails>
 
   onWishTap() {
     if (is_logged_in.$ == false) {
-      ToastComponent.showDialog(AppLocalizations.of(context)!.you_need_to_log_in,
-          gravity: Toast.center, duration: Toast.lengthLong);
+      ToastComponent.showDialog(
+          AppLocalizations.of(context)!.you_need_to_log_in,
+          gravity: Toast.center,
+          duration: Toast.lengthLong);
       return;
     }
 
@@ -686,7 +690,8 @@ class _AuctionProductsDetailsState extends State<AuctionProductsDetails>
     );
 
     return Directionality(
-      textDirection: app_language_rtl.$! ? TextDirection.rtl : TextDirection.ltr,
+      textDirection:
+          app_language_rtl.$! ? TextDirection.rtl : TextDirection.ltr,
       child: Scaffold(
           extendBody: true,
           // bottomNavigationBar: buildBottomAppBar(context, _addedToCartSnackbar),
@@ -704,7 +709,7 @@ class _AuctionProductsDetailsState extends State<AuctionProductsDetails>
                     },
                     child: Container(
                       margin: EdgeInsets.only(
-                        left: 18,
+                        left: 0,
                       ),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(6.0),
@@ -1230,7 +1235,7 @@ class _AuctionProductsDetailsState extends State<AuctionProductsDetails>
         backgroundColor: MyTheme.accent_color,
       ),
       child: Text(
-        'Submit',
+        AppLocalizations.of(context)!.submit_ucf,
         style: TextStyle(color: MyTheme.white),
       ),
       onPressed: () {
@@ -1253,12 +1258,12 @@ class _AuctionProductsDetailsState extends State<AuctionProductsDetails>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Bid For Product ",
+                        AppLocalizations.of(context)!.bid_for_product_ucf,
                         style: TextStyle(
                             fontSize: 13, color: MyTheme.dark_font_grey),
                       ),
                       Text(
-                        "(Min Bid Amount: ${_auctionproductDetails.minBidPrice})",
+                        "(${AppLocalizations.of(context)!.min_bid_amount_ucf}: ${_auctionproductDetails.minBidPrice})",
                         style: TextStyle(fontSize: 10),
                       ),
                     ],
@@ -1289,7 +1294,7 @@ class _AuctionProductsDetailsState extends State<AuctionProductsDetails>
               Row(
                 children: [
                   Text(
-                    "Place Bid Price ",
+                    AppLocalizations.of(context)!.place_bid_price_ucf,
                     style: TextStyle(fontSize: 12),
                   ),
                   Text(
@@ -1306,7 +1311,8 @@ class _AuctionProductsDetailsState extends State<AuctionProductsDetails>
                       keyboardType: TextInputType.number,
                       controller: _bidPriceController,
                       decoration: InputDecoration(
-                        hintText: "Enter Amount",
+                        hintText:
+                            AppLocalizations.of(context)!.enter_amount_ucf,
                         isDense: true,
                         border: OutlineInputBorder(
                           borderSide: BorderSide(color: Colors.grey),
@@ -1314,23 +1320,22 @@ class _AuctionProductsDetailsState extends State<AuctionProductsDetails>
                       ),
                       validator: (value) {
                         if (value!.isEmpty) {
-                          return "Please fill out this form";
+                          return AppLocalizations.of(context)!
+                              .please_fill_out_this_form;
                         }
 
                         if (_auctionproductDetails.highestBid != '') {
-                          // print(value);
-                          // print(double.parse(value));
-                          // print(_auctionproductDetails.minBidPrice.toDouble());
-                          // print(_auctionproductDetails.minBidPrice);
                           if (double.parse(value) <
                               _auctionproductDetails.minBidPrice.toDouble()) {
-                            return "Value must be greater than\n minimum bid";
+                            return AppLocalizations.of(context)!
+                                .value_must_be_greater;
                           }
                         }
                         if (_auctionproductDetails.highestBid == '') {
                           if (double.parse(value) <
                               _auctionproductDetails.minBidPrice.toDouble()) {
-                            return "Value must be greater than\n or equal to Minimum bid";
+                            return AppLocalizations.of(context)!
+                                .value_must_be_greater_or_equal;
                           }
                         }
 
@@ -1346,7 +1351,7 @@ class _AuctionProductsDetailsState extends State<AuctionProductsDetails>
                             backgroundColor: MyTheme.accent_color,
                           ),
                           child: Text(
-                            'Submit',
+                            AppLocalizations.of(context)!.submit_ucf,
                             style: TextStyle(color: MyTheme.white),
                           ),
                           onPressed: () {
@@ -1431,7 +1436,7 @@ class _AuctionProductsDetailsState extends State<AuctionProductsDetails>
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: Row(
             children: [
-              Text("${_auctionproductDetails.startingBid}"),
+              Text(convertPrice(_auctionproductDetails.startingBid)),
               Text(" /${_auctionproductDetails.unit}"),
             ],
           ),
@@ -1458,7 +1463,7 @@ class _AuctionProductsDetailsState extends State<AuctionProductsDetails>
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: _auctionproductDetails.highestBid != ''
-              ? Text("${_auctionproductDetails.highestBid}")
+              ? Text(convertPrice(_auctionproductDetails.highestBid))
               : Text(''),
         ),
       ],
@@ -1795,8 +1800,7 @@ class _AuctionProductsDetailsState extends State<AuctionProductsDetails>
           ratingWidget: RatingWidget(
             full: Icon(Icons.star, color: Colors.amber),
             half: Icon(Icons.star_half, color: Colors.amber),
-            empty:
-                Icon(Icons.star, color: Color.fromRGBO(224, 224, 225, 1)),
+            empty: Icon(Icons.star, color: Color.fromRGBO(224, 224, 225, 1)),
           ),
           itemPadding: EdgeInsets.only(right: 1.0),
           onRatingUpdate: (rating) {

@@ -120,7 +120,8 @@ class _ClubpointState extends State<Clubpoint> {
     );
 
     return Directionality(
-      textDirection: app_language_rtl.$! ? TextDirection.rtl : TextDirection.ltr,
+      textDirection:
+          app_language_rtl.$! ? TextDirection.rtl : TextDirection.ltr,
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: buildAppBar(context),
@@ -321,7 +322,7 @@ class _ClubpointState extends State<Clubpoint> {
                         : _list[index].convertible_club_point <= 0
                             //false
                             ? Text(
-                                "Refunded",
+                                AppLocalizations.of(context)!.refunded_ucf,
                                 style: TextStyle(
                                     color: MyTheme.grey_153,
                                     fontSize: 12,

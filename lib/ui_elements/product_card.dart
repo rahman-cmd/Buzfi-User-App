@@ -25,7 +25,7 @@ class ProductCard extends StatefulWidget {
     this.image,
     this.name,
     this.main_price,
-    this.is_wholesale=false,
+    this.is_wholesale = false,
     this.stroked_price,
     this.has_discount,
     this.discount,
@@ -41,13 +41,18 @@ class _ProductCardState extends State<ProductCard> {
     //print((MediaQuery.of(context).size.width - 48 ) / 2);
     return InkWell(
       onTap: () {
-        Navigator.push(context, MaterialPageRoute(builder: (context) {
-          return widget.identifier == 'auction'
-              ? AuctionProductsDetails(id: widget.id)
-              : ProductDetails(
-                  id: widget.id,
-                );
-        }));
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) {
+              return widget.identifier == 'auction'
+                  ? AuctionProductsDetails(id: widget.id)
+                  : ProductDetails(
+                      id: widget.id,
+                    );
+            },
+          ),
+        );
       },
       child: Container(
         decoration: BoxDecorations.buildBoxDecoration_1().copyWith(),
@@ -57,20 +62,23 @@ class _ProductCardState extends State<ProductCard> {
               AspectRatio(
                 aspectRatio: 1,
                 child: Container(
-                    width: double.infinity,
-                    child: ClipRRect(
-                        clipBehavior: Clip.hardEdge,
-                        borderRadius: BorderRadius.vertical(
-                            top: Radius.circular(6), bottom: Radius.zero),
-                        child: FadeInImage.assetNetwork(
-                          placeholder: 'assets/placeholder.png',
-                          image: widget.image!,
-                          fit: BoxFit.cover,
-                        ))),
+                  width: double.infinity,
+                  child: ClipRRect(
+                    clipBehavior: Clip.hardEdge,
+                    borderRadius: BorderRadius.vertical(
+                        top: Radius.circular(6), bottom: Radius.zero),
+                    child: FadeInImage.assetNetwork(
+                      placeholder: 'assets/placeholder.png',
+                      image: widget.image!,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
               ),
               Container(
                 width: double.infinity,
                 child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
@@ -135,6 +143,7 @@ class _ProductCardState extends State<ProductCard> {
               child: Align(
                 alignment: Alignment.topRight,
                 child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     if (widget.has_discount!)
@@ -171,7 +180,7 @@ class _ProductCardState extends State<ProductCard> {
                       ),
                     Visibility(
                       visible: whole_sale_addon_installed.$,
-                      child: widget.is_wholesale !=null && widget.is_wholesale!
+                      child: widget.is_wholesale != null && widget.is_wholesale!
                           ? Container(
                               padding: EdgeInsets.symmetric(
                                   horizontal: 12, vertical: 4),

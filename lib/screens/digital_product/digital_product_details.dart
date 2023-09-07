@@ -7,6 +7,7 @@ import 'package:active_ecommerce_flutter/custom/device_info.dart';
 import 'package:active_ecommerce_flutter/custom/text_styles.dart';
 import 'package:active_ecommerce_flutter/custom/toast_component.dart';
 import 'package:active_ecommerce_flutter/helpers/color_helper.dart';
+import 'package:active_ecommerce_flutter/helpers/main_helpers.dart';
 import 'package:active_ecommerce_flutter/helpers/shared_value_helper.dart';
 import 'package:active_ecommerce_flutter/helpers/shimmer_helper.dart';
 import 'package:active_ecommerce_flutter/my_theme.dart';
@@ -127,8 +128,6 @@ class _DigitalProductDetailsState extends State<DigitalProductDetails>
     super.initState();
   }
 
-
-
   fetchAll() {
     fetchProductDetails();
     if (is_logged_in.$ == true) {
@@ -236,8 +235,10 @@ class _DigitalProductDetailsState extends State<DigitalProductDetails>
 
   onWishTap() {
     if (is_logged_in.$ == false) {
-      ToastComponent.showDialog(AppLocalizations.of(context)!.you_need_to_log_in,
-          gravity: Toast.center, duration: Toast.lengthLong);
+      ToastComponent.showDialog(
+          AppLocalizations.of(context)!.you_need_to_log_in,
+          gravity: Toast.center,
+          duration: Toast.lengthLong);
       return;
     }
 
@@ -722,7 +723,6 @@ class _DigitalProductDetailsState extends State<DigitalProductDetails>
     });
   }
 
-
   // @override
   // void dispose() {
   //   _mainScrollController.dispose();
@@ -757,7 +757,8 @@ class _DigitalProductDetailsState extends State<DigitalProductDetails>
     );
 
     return Directionality(
-      textDirection: app_language_rtl.$! ? TextDirection.rtl : TextDirection.ltr,
+      textDirection:
+          app_language_rtl.$! ? TextDirection.rtl : TextDirection.ltr,
       child: Scaffold(
           extendBody: true,
           bottomNavigationBar: buildBottomAppBar(context, _addedToCartSnackbar),
@@ -1234,7 +1235,8 @@ class _DigitalProductDetailsState extends State<DigitalProductDetails>
                         0.0,
                       ),
                       child: Text(
-                        AppLocalizations.of(context)!.products_you_may_also_like,
+                        AppLocalizations.of(context)!
+                            .products_you_may_also_like,
                         style: TextStyle(
                             color: MyTheme.dark_font_grey,
                             fontSize: 16,
@@ -1685,8 +1687,9 @@ class _DigitalProductDetailsState extends State<DigitalProductDetails>
           ),
         ),
         Container(
-          alignment:
-              app_language_rtl.$! ? Alignment.centerRight : Alignment.centerLeft,
+          alignment: app_language_rtl.$!
+              ? Alignment.centerRight
+              : Alignment.centerLeft,
           height: 40,
           width: MediaQuery.of(context).size.width - (107 + 44),
           child: Scrollbar(
@@ -1822,7 +1825,7 @@ class _DigitalProductDetailsState extends State<DigitalProductDetails>
     return Row(
       children: [
         Text(
-          _singlePriceString,
+          convertPrice(_singlePriceString),
           style: TextStyle(
               color: MyTheme.accent_color,
               fontSize: 16.0,
@@ -2005,8 +2008,7 @@ class _DigitalProductDetailsState extends State<DigitalProductDetails>
           ratingWidget: RatingWidget(
             full: Icon(Icons.star, color: Colors.amber),
             half: Icon(Icons.star_half, color: Colors.amber),
-            empty:
-                Icon(Icons.star, color: Color.fromRGBO(224, 224, 225, 1)),
+            empty: Icon(Icons.star, color: Color.fromRGBO(224, 224, 225, 1)),
           ),
           itemPadding: EdgeInsets.only(right: 1.0),
           onRatingUpdate: (rating) {

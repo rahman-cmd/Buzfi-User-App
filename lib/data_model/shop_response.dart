@@ -17,13 +17,13 @@ class ShopResponse {
     this.status,
   });
 
-  List<Shop>? shops;
+  List<Shop>? shops =[];
   Meta? meta;
   bool? success;
   int? status;
 
   factory ShopResponse.fromJson(Map<String, dynamic> json) => ShopResponse(
-    shops: List<Shop>.from(json["data"].map((x) => Shop.fromJson(x))),
+    shops:json["data"]==null?[]: List<Shop>.from(json["data"].map((x) => Shop.fromJson(x))),
     meta: json["meta"] == null ? null :  Meta.fromJson(json["meta"]),
     success: json["success"],
     status: json["status"],

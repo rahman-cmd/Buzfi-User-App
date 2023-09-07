@@ -1,13 +1,13 @@
 import 'package:active_ecommerce_flutter/custom/box_decorations.dart';
 import 'package:active_ecommerce_flutter/custom/device_info.dart';
 import 'package:active_ecommerce_flutter/custom/useful_elements.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:active_ecommerce_flutter/helpers/main_helpers.dart';
+import 'package:active_ecommerce_flutter/helpers/shared_value_helper.dart';
+import 'package:active_ecommerce_flutter/helpers/shimmer_helper.dart';
 import 'package:active_ecommerce_flutter/my_theme.dart';
 import 'package:active_ecommerce_flutter/repositories/refund_request_repository.dart';
-import 'package:active_ecommerce_flutter/helpers/shimmer_helper.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:active_ecommerce_flutter/helpers/shared_value_helper.dart';
 
 class RefundRequest extends StatefulWidget {
   @override
@@ -57,8 +57,8 @@ class _RefundRequestState extends State<RefundRequest> {
   }
 
   reset() {
-    _list.clear();
-    _converted_ids.clear();
+    _list = [];
+    _converted_ids = [];
     _isInitial = true;
     _totalData = 0;
     _page = 1;
@@ -79,7 +79,8 @@ class _RefundRequestState extends State<RefundRequest> {
   @override
   Widget build(BuildContext context) {
     return Directionality(
-      textDirection: app_language_rtl.$! ? TextDirection.rtl : TextDirection.ltr,
+      textDirection:
+          app_language_rtl.$! ? TextDirection.rtl : TextDirection.ltr,
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: buildAppBar(context),
@@ -140,7 +141,10 @@ class _RefundRequestState extends State<RefundRequest> {
       ),
       title: Text(
         AppLocalizations.of(context)!.refund_status_ucf,
-        style: TextStyle(fontSize: 16, color: MyTheme.dark_font_grey,fontWeight: FontWeight.bold),
+        style: TextStyle(
+            fontSize: 16,
+            color: MyTheme.dark_font_grey,
+            fontWeight: FontWeight.bold),
       ),
       elevation: 0.0,
       titleSpacing: 0,
@@ -155,8 +159,10 @@ class _RefundRequestState extends State<RefundRequest> {
     } else if (_list.length > 0) {
       return SingleChildScrollView(
         child: ListView.separated(
-          separatorBuilder: (context,index){
-            return SizedBox(height: 14,);
+          separatorBuilder: (context, index) {
+            return SizedBox(
+              height: 14,
+            );
           },
           itemCount: _list.length,
           scrollDirection: Axis.vertical,
@@ -183,17 +189,15 @@ class _RefundRequestState extends State<RefundRequest> {
         padding: const EdgeInsets.all(16.0),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
-
           children: [
             Container(
-                width: DeviceInfo(context).width!/2,
+                width: DeviceInfo(context).width! / 2,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
                       padding: const EdgeInsets.only(bottom: 8.0),
                       child: Text(
-
                         _list[index].product_name,
                         textAlign: TextAlign.start,
                         style: TextStyle(
@@ -202,7 +206,6 @@ class _RefundRequestState extends State<RefundRequest> {
                         ),
                       ),
                     ),
-
                     Padding(
                       padding: const EdgeInsets.only(bottom: 8.0),
                       child: Text(
@@ -214,7 +217,7 @@ class _RefundRequestState extends State<RefundRequest> {
                       ),
                     ),
                     Text(
-                     "Date: " +_list[index].date,
+                      "Date: " + _list[index].date,
                       style: TextStyle(
                         color: MyTheme.dark_font_grey,
                       ),
@@ -233,24 +236,21 @@ class _RefundRequestState extends State<RefundRequest> {
                     Padding(
                       padding: const EdgeInsets.only(bottom: 8.0),
                       child: Text(
-                        _list[index].product_price,
+                        convertPrice(_list[index].product_price),
                         style: TextStyle(
-                          color: MyTheme.accent_color,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold
-                        ),
+                            color: MyTheme.accent_color,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold),
                       ),
                     ),
                     Text(
                       _list[index].refund_label,
                       style: TextStyle(
-                        color: _list[index].refund_status == 1
-                            ? Colors.green
-                            : Colors.blue,
-                        fontWeight: FontWeight.bold
-                      ),
+                          color: _list[index].refund_status == 1
+                              ? Colors.green
+                              : Colors.blue,
+                          fontWeight: FontWeight.bold),
                     ),
-
                   ],
                 ))
           ],

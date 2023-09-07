@@ -186,7 +186,7 @@ class _FollowedSellersState extends State<FollowedSellers> {
                 height: 15,
                 child: RatingBar(
                     ignoreGestures: true,
-                    initialRating: double.parse(sellerInfo.shopRating),
+                    initialRating: double.parse(sellerInfo.shopRating.toString()),
                     maxRating: 5,
                     direction: Axis.horizontal,
                     itemSize: 15.0,

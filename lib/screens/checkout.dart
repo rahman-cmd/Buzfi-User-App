@@ -1,6 +1,7 @@
 import 'package:active_ecommerce_flutter/custom/box_decorations.dart';
 import 'package:active_ecommerce_flutter/custom/btn.dart';
 import 'package:active_ecommerce_flutter/custom/enum_classes.dart';
+import 'package:active_ecommerce_flutter/custom/lang_text.dart';
 import 'package:active_ecommerce_flutter/custom/toast_component.dart';
 import 'package:active_ecommerce_flutter/helpers/shared_value_helper.dart';
 import 'package:active_ecommerce_flutter/helpers/shimmer_helper.dart';
@@ -211,7 +212,6 @@ class _CheckoutState extends State<Checkout> {
   }
 
   onPressPlaceOrderOrProceed() {
-    print(_selected_payment_method);
     if (_selected_payment_method == "") {
       ToastComponent.showDialog(
           AppLocalizations.of(context)!.please_choose_one_option_to_pay,
@@ -350,7 +350,7 @@ class _CheckoutState extends State<Checkout> {
     } else if (_selected_payment_method == "instamojo_payment") {
       Navigator.push(context, MaterialPageRoute(builder: (context) {
         return OnlinePay(
-          title: AppLocalizations.of(context)!.pay_with_instamojo,
+          title: LangText(context).local.pay_with_instamojo,
           amount: _grandTotalValue,
           payment_type: payment_type,
           payment_method_key: _selected_payment_method_key,
@@ -722,14 +722,23 @@ class _CheckoutState extends State<Checkout> {
                 hintText: AppLocalizations.of(context)!.enter_coupon_code,
                 hintStyle:
                     TextStyle(fontSize: 14.0, color: MyTheme.textfield_grey),
-                enabledBorder: OutlineInputBorder(
-                  borderSide:
-                      BorderSide(color: MyTheme.textfield_grey, width: 0.5),
-                  borderRadius: const BorderRadius.only(
-                    topLeft: const Radius.circular(8.0),
-                    bottomLeft: const Radius.circular(8.0),
-                  ),
-                ),
+                enabledBorder: app_language_rtl.$!
+                    ? OutlineInputBorder(
+                        borderSide: BorderSide(
+                            color: MyTheme.textfield_grey, width: 0.5),
+                        borderRadius: const BorderRadius.only(
+                          topRight: const Radius.circular(8.0),
+                          bottomRight: const Radius.circular(8.0),
+                        ),
+                      )
+                    : OutlineInputBorder(
+                        borderSide: BorderSide(
+                            color: MyTheme.textfield_grey, width: 0.5),
+                        borderRadius: const BorderRadius.only(
+                          topLeft: const Radius.circular(8.0),
+                          bottomLeft: const Radius.circular(8.0),
+                        ),
+                      ),
                 focusedBorder: OutlineInputBorder(
                   borderSide:
                       BorderSide(color: MyTheme.medium_grey, width: 0.5),
@@ -748,11 +757,17 @@ class _CheckoutState extends State<Checkout> {
                 child: Btn.basic(
                   minWidth: MediaQuery.of(context).size.width,
                   color: MyTheme.accent_color,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: const BorderRadius.only(
-                    topRight: const Radius.circular(8.0),
-                    bottomRight: const Radius.circular(8.0),
-                  )),
+                  shape: app_language_rtl.$!
+                      ? RoundedRectangleBorder(
+                          borderRadius: const BorderRadius.only(
+                          topLeft: const Radius.circular(8.0),
+                          bottomLeft: const Radius.circular(8.0),
+                        ))
+                      : RoundedRectangleBorder(
+                          borderRadius: const BorderRadius.only(
+                          topRight: const Radius.circular(8.0),
+                          bottomRight: const Radius.circular(8.0),
+                        )),
                   child: Text(
                     AppLocalizations.of(context)!.apply_coupon_all_capital,
                     style: TextStyle(

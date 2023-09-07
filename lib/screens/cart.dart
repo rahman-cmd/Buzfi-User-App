@@ -1,30 +1,30 @@
 import 'package:active_ecommerce_flutter/custom/aiz_route.dart';
 import 'package:active_ecommerce_flutter/custom/box_decorations.dart';
 import 'package:active_ecommerce_flutter/custom/btn.dart';
-import 'package:active_ecommerce_flutter/custom/common_functions.dart';
 import 'package:active_ecommerce_flutter/custom/device_info.dart';
 import 'package:active_ecommerce_flutter/custom/text_styles.dart';
+import 'package:active_ecommerce_flutter/custom/toast_component.dart';
 import 'package:active_ecommerce_flutter/custom/useful_elements.dart';
-import 'package:active_ecommerce_flutter/helpers/system_config.dart';
-import 'package:active_ecommerce_flutter/presenter/cart_counter.dart';
-import 'package:active_ecommerce_flutter/screens/select_address.dart';
-import 'package:active_ecommerce_flutter/screens/shipping_info.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:active_ecommerce_flutter/my_theme.dart';
-import 'package:active_ecommerce_flutter/ui_sections/drawer.dart';
-import 'package:flutter/widgets.dart';
-import 'package:active_ecommerce_flutter/repositories/cart_repository.dart';
+import 'package:active_ecommerce_flutter/data_model/cart_response.dart';
 import 'package:active_ecommerce_flutter/helpers/shared_value_helper.dart';
 import 'package:active_ecommerce_flutter/helpers/shimmer_helper.dart';
-import 'package:active_ecommerce_flutter/custom/toast_component.dart';
+import 'package:active_ecommerce_flutter/helpers/system_config.dart';
+import 'package:active_ecommerce_flutter/my_theme.dart';
+import 'package:active_ecommerce_flutter/presenter/cart_counter.dart';
+import 'package:active_ecommerce_flutter/repositories/cart_repository.dart';
+import 'package:active_ecommerce_flutter/screens/select_address.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:toast/toast.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:active_ecommerce_flutter/custom/common_functions.dart';
 
 class Cart extends StatefulWidget {
-  Cart({Key? key, this.has_bottomnav,this.from_navigation = false, this.counter}) : super(key: key);
+  Cart(
+      {Key? key,
+      this.has_bottomnav,
+      this.from_navigation = false,
+      this.counter})
+      : super(key: key);
   final bool? has_bottomnav;
   final bool from_navigation;
   final CartCounter? counter;
@@ -37,6 +37,7 @@ class _CartState extends State<Cart> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   ScrollController _mainScrollController = ScrollController();
   var _shopList = [];
+  CartResponse? _shopResponse;
   bool _isInitial = true;
   var _cartTotal = 0.00;
   var _cartTotalString = ". . .";
@@ -57,89 +58,66 @@ class _CartState extends State<Cart> {
     }
   }
 
-
   @override
   void dispose() {
     super.dispose();
     _mainScrollController.dispose();
   }
 
-
   getCartCount() {
     Provider.of<CartCounter>(context, listen: false).getCount();
     // var res = await CartRepository().getCartCount();
-   // widget.counter.controller.sink.add(res.count);
+    // widget.counter.controller.sink.add(res.count);
   }
 
   fetchData() async {
     getCartCount();
-    var cartResponseList =
+    CartResponse cartResponseList =
         await CartRepository().getCartResponseList(user_id.$);
 
-    if (cartResponseList != null && cartResponseList.length > 0) {
-      _shopList = cartResponseList;
+    if (cartResponseList != null || cartResponseList.data!.length > 0) {
+      _shopList = cartResponseList.data!;
+      _shopResponse = cartResponseList;
+      getSetCartTotal();
     }
     _isInitial = false;
-    getSetCartTotal();
+
     setState(() {});
   }
 
   getSetCartTotal() {
-    _cartTotal = 0.00;
-    if (_shopList.length > 0) {
-      _shopList.forEach((shop) {
-        if (shop.cart_items.length > 0) {
-          shop.cart_items.forEach((cart_item) {
-            _cartTotal += double.parse(
-                ((cart_item.price + cart_item.tax) * cart_item.quantity)
-                    .toStringAsFixed(2));
-            _cartTotalString =
-                "${SystemConfig.systemCurrency!.symbol}${_cartTotal.toStringAsFixed(2)}";
-          });
-        }
-      });
-    }
+    _cartTotalString = _shopResponse!.grandTotal!.replaceAll(
+        SystemConfig.systemCurrency!.code!,
+        SystemConfig.systemCurrency!.symbol!);
 
     setState(() {});
   }
 
-  partialTotalString(index) {
-    var partialTotal = 0.00;
-    var partialTotalString = "";
-    if (_shopList[index].cart_items.length > 0) {
-      _shopList[index].cart_items.forEach((cart_item) {
-        partialTotal += (cart_item.price + cart_item.tax) * cart_item.quantity;
-        partialTotalString =
-            "${SystemConfig.systemCurrency!.symbol}${partialTotal.toStringAsFixed(2)}";
-      });
-    }
-
-    return partialTotalString;
-  }
-
   onQuantityIncrease(seller_index, item_index) {
-    if (_shopList[seller_index].cart_items[item_index].quantity <
-        _shopList[seller_index].cart_items[item_index].upper_limit) {
-      _shopList[seller_index].cart_items[item_index].quantity++;
-      getSetCartTotal();
+    if (_shopList[seller_index].cartItems[item_index].quantity <
+        _shopList[seller_index].cartItems[item_index].upperLimit) {
+      _shopList[seller_index].cartItems[item_index].quantity++;
+      // getSetCartTotal();
       setState(() {});
+      process(mode: "update");
     } else {
       ToastComponent.showDialog(
-          "${AppLocalizations.of(context)!.cannot_order_more_than} ${_shopList[seller_index].cart_items[item_index].upper_limit} ${AppLocalizations.of(context)!.items_of_this_all_lower}",
+          "${AppLocalizations.of(context)!.cannot_order_more_than} ${_shopList[seller_index].cartItems[item_index].upperLimit} ${AppLocalizations.of(context)!.items_of_this_all_lower}",
           gravity: Toast.center,
           duration: Toast.lengthLong);
     }
   }
 
   onQuantityDecrease(seller_index, item_index) {
-    if (_shopList[seller_index].cart_items[item_index].quantity >
-        _shopList[seller_index].cart_items[item_index].lower_limit) {
-      _shopList[seller_index].cart_items[item_index].quantity--;
-      getSetCartTotal();
+    if (_shopList[seller_index].cartItems[item_index].quantity >
+        _shopList[seller_index].cartItems[item_index].lowerLimit) {
+      _shopList[seller_index].cartItems[item_index].quantity--;
+      // getSetCartTotal();
       setState(() {});
+      process(mode: "update");
     } else {
       ToastComponent.showDialog(
-          "${AppLocalizations.of(context)!.cannot_order_more_than} ${_shopList[seller_index].cart_items[item_index].lower_limit} ${AppLocalizations.of(context)!.items_of_this_all_lower}",
+          "${AppLocalizations.of(context)!.cannot_order_more_than} ${_shopList[seller_index].cartItems[item_index].lowerLimit} ${AppLocalizations.of(context)!.items_of_this_all_lower}",
           gravity: Toast.center,
           duration: Toast.lengthLong);
     }
@@ -155,7 +133,8 @@ class _CartState extends State<Cart> {
                 padding:
                     const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
                 child: Text(
-                  AppLocalizations.of(context)!.are_you_sure_to_remove_this_item,
+                  AppLocalizations.of(context)!
+                      .are_you_sure_to_remove_this_item,
                   maxLines: 3,
                   style: TextStyle(color: MyTheme.font_grey, fontSize: 14),
                 ),
@@ -214,8 +193,8 @@ class _CartState extends State<Cart> {
     var cart_quantities = [];
     if (_shopList.length > 0) {
       _shopList.forEach((shop) {
-        if (shop.cart_items.length > 0) {
-          shop.cart_items.forEach((cart_item) {
+        if (shop.cartItems.length > 0) {
+          shop.cartItems.forEach((cart_item) {
             cart_ids.add(cart_item.id);
             cart_quantities.add(cart_item.quantity);
           });
@@ -224,10 +203,8 @@ class _CartState extends State<Cart> {
     }
 
     if (cart_ids.length == 0) {
-      ToastComponent.showDialog(
-          AppLocalizations.of(context)!.cart_is_empty,
-          gravity: Toast.center,
-          duration: Toast.lengthLong);
+      ToastComponent.showDialog(AppLocalizations.of(context)!.cart_is_empty,
+          gravity: Toast.center, duration: Toast.lengthLong);
       return;
     }
 
@@ -244,11 +221,13 @@ class _CartState extends State<Cart> {
       ToastComponent.showDialog(cartProcessResponse.message,
           gravity: Toast.center, duration: Toast.lengthLong);
     } else {
-      ToastComponent.showDialog(cartProcessResponse.message,
-          gravity: Toast.center, duration: Toast.lengthLong);
+      // cart update message
+      // remove on
+      // ToastComponent.showDialog(cartProcessResponse.message,
+      //     gravity: Toast.center, duration: Toast.lengthLong);
 
       if (mode == "update") {
-        reset();
+        // reset();
         fetchData();
       } else if (mode == "proceed_to_shipping") {
         AIZRoute.push(context, SelectAddress()).then((value) {
@@ -280,7 +259,8 @@ class _CartState extends State<Cart> {
   @override
   Widget build(BuildContext context) {
     return Directionality(
-      textDirection: app_language_rtl.$! ? TextDirection.rtl : TextDirection.ltr,
+      textDirection:
+          app_language_rtl.$! ? TextDirection.rtl : TextDirection.ltr,
       child: Scaffold(
           key: _scaffoldKey,
           //drawer: MainDrawer(),
@@ -333,7 +313,7 @@ class _CartState extends State<Cart> {
       height: widget.has_bottomnav! ? 200 : 120,
       //color: Colors.white,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24.0,vertical: 4),
+        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 4),
         child: Column(
           children: [
             Container(
@@ -348,14 +328,16 @@ class _CartState extends State<Cart> {
                     padding: const EdgeInsets.symmetric(horizontal: 20.0),
                     child: Text(
                       AppLocalizations.of(context)!.total_amount_ucf,
-                      style:
-                          TextStyle(color: MyTheme.dark_font_grey, fontSize: 13,fontWeight: FontWeight.w700),
+                      style: TextStyle(
+                          color: MyTheme.dark_font_grey,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700),
                     ),
                   ),
                   Spacer(),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Text("$_cartTotalString",
+                    child: Text(_cartTotalString,
                         style: TextStyle(
                             color: MyTheme.accent_color,
                             fontSize: 14,
@@ -366,64 +348,65 @@ class _CartState extends State<Cart> {
             ),
             Row(
               children: [
+                // Padding(
+                //   padding: const EdgeInsets.only(top: 8.0),
+                //   child: Container(
+                //     width: (MediaQuery.of(context).size.width - 48) * (1 / 3),
+                //     height: 58,
+                //     decoration: BoxDecoration(
+                //         color: Colors.white,
+                //         // border:
+                //         //     Border.all(color: MyTheme.accent_color, width: 1),
+                //         borderRadius: app_language_rtl.$!
+                //             ? const BorderRadius.only(
+                //                 topLeft: const Radius.circular(0.0),
+                //                 bottomLeft: const Radius.circular(0.0),
+                //                 topRight: const Radius.circular(6.0),
+                //                 bottomRight: const Radius.circular(6.0),
+                //               )
+                //             : const BorderRadius.only(
+                //                 topLeft: const Radius.circular(6.0),
+                //                 bottomLeft: const Radius.circular(6.0),
+                //                 topRight: const Radius.circular(0.0),
+                //                 bottomRight: const Radius.circular(0.0),
+                //               )),
+                //     child: Btn.basic(
+                //       minWidth: MediaQuery.of(context).size.width,
+                //       color: MyTheme.soft_accent_color,
+                //       shape: app_language_rtl.$!
+                //           ? RoundedRectangleBorder(
+                //               borderRadius: const BorderRadius.only(
+                //               topLeft: const Radius.circular(0.0),
+                //               bottomLeft: const Radius.circular(0.0),
+                //               topRight: const Radius.circular(6.0),
+                //               bottomRight: const Radius.circular(6.0),
+                //             ))
+                //           : RoundedRectangleBorder(
+                //               borderRadius: const BorderRadius.only(
+                //               topLeft: const Radius.circular(6.0),
+                //               bottomLeft: const Radius.circular(6.0),
+                //               topRight: const Radius.circular(0.0),
+                //               bottomRight: const Radius.circular(0.0),
+                //             )),
+                //       child: Text(
+                //         AppLocalizations.of(context)!.update_cart_ucf,
+                //         style: TextStyle(
+                //             color: MyTheme.dark_font_grey,
+                //             fontSize: 13,
+                //             fontWeight: FontWeight.w700),
+                //       ),
+                //       onPressed: () {
+                //         onPressUpdate();
+                //       },
+                //     ),
+                //   ),
+                // ),
                 Padding(
                   padding: const EdgeInsets.only(top: 8.0),
                   child: Container(
-                    width: (MediaQuery.of(context).size.width - 48) * (1 / 3),
                     height: 58,
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        // border:
-                        //     Border.all(color: MyTheme.accent_color, width: 1),
-                        borderRadius: app_language_rtl.$!
-                            ? const BorderRadius.only(
-                                topLeft: const Radius.circular(0.0),
-                                bottomLeft: const Radius.circular(0.0),
-                                topRight: const Radius.circular(6.0),
-                                bottomRight: const Radius.circular(6.0),
-                              )
-                            : const BorderRadius.only(
-                                topLeft: const Radius.circular(6.0),
-                                bottomLeft: const Radius.circular(6.0),
-                                topRight: const Radius.circular(0.0),
-                                bottomRight: const Radius.circular(0.0),
-                              )),
-                    child: Btn.basic(
-                      minWidth: MediaQuery.of(context).size.width,
-                      color: MyTheme.soft_accent_color,
-                      shape: app_language_rtl.$!
-                          ? RoundedRectangleBorder(
-                              borderRadius: const BorderRadius.only(
-                              topLeft: const Radius.circular(0.0),
-                              bottomLeft: const Radius.circular(0.0),
-                              topRight: const Radius.circular(6.0),
-                              bottomRight: const Radius.circular(6.0),
-                            ))
-                          : RoundedRectangleBorder(
-                              borderRadius: const BorderRadius.only(
-                              topLeft: const Radius.circular(6.0),
-                              bottomLeft: const Radius.circular(6.0),
-                              topRight: const Radius.circular(0.0),
-                              bottomRight: const Radius.circular(0.0),
-                            )),
-                      child: Text(
-                        AppLocalizations.of(context)!.update_cart_ucf,
-                        style: TextStyle(
-                            color: MyTheme.dark_font_grey,
-                            fontSize: 13,
-                            fontWeight: FontWeight.w700),
-                      ),
-                      onPressed: () {
-                        onPressUpdate();
-                      },
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 8.0),
-                  child: Container(
-                    height: 58,
-                    width: (MediaQuery.of(context).size.width - 48) * (2 / 3),
+                    width: (MediaQuery.of(context).size.width - 48),
+                    // width: (MediaQuery.of(context).size.width - 48) * (2 / 3),
                     decoration: BoxDecoration(
                         color: Colors.white,
                         border:
@@ -432,18 +415,17 @@ class _CartState extends State<Cart> {
                             ? const BorderRadius.only(
                                 topLeft: const Radius.circular(6.0),
                                 bottomLeft: const Radius.circular(6.0),
-                                topRight: const Radius.circular(0.0),
-                                bottomRight: const Radius.circular(0.0),
+                                topRight: const Radius.circular(6.0),
+                                bottomRight: const Radius.circular(6.0),
                               )
                             : const BorderRadius.only(
-                                topLeft: const Radius.circular(0.0),
-                                bottomLeft: const Radius.circular(0.0),
+                                topLeft: const Radius.circular(6.0),
+                                bottomLeft: const Radius.circular(6.0),
                                 topRight: const Radius.circular(6.0),
                                 bottomRight: const Radius.circular(6.0),
                               )),
                     child: Btn.basic(
                       minWidth: MediaQuery.of(context).size.width,
-
                       color: MyTheme.accent_color,
                       shape: app_language_rtl.$!
                           ? RoundedRectangleBorder(
@@ -461,8 +443,7 @@ class _CartState extends State<Cart> {
                               bottomRight: const Radius.circular(6.0),
                             )),
                       child: Text(
-                        AppLocalizations.of(context)!
-                            .proceed_to_shipping_ucf,
+                        AppLocalizations.of(context)!.proceed_to_shipping_ucf,
                         style: TextStyle(
                             color: Colors.white,
                             fontSize: 13,
@@ -486,8 +467,9 @@ class _CartState extends State<Cart> {
     return AppBar(
       backgroundColor: Colors.white,
       leading: Builder(
-        builder: (context) =>
-            widget.from_navigation ? UsefulElements.backToMain(context, go_back: false) : UsefulElements.backButton(context),
+        builder: (context) => widget.from_navigation
+            ? UsefulElements.backToMain(context, go_back: false)
+            : UsefulElements.backButton(context),
       ),
       title: Text(
         AppLocalizations.of(context)!.shopping_cart_ucf,
@@ -538,8 +520,10 @@ class _CartState extends State<Cart> {
                       ),
                       Spacer(),
                       Text(
-
-                        partialTotalString(index),
+                        _shopList[index].subTotal.replaceAll(
+                                SystemConfig.systemCurrency!.code,
+                                SystemConfig.systemCurrency!.symbol) ??
+                            '',
                         style: TextStyle(
                             color: MyTheme.accent_color,
                             fontWeight: FontWeight.w700,
@@ -571,7 +555,7 @@ class _CartState extends State<Cart> {
         separatorBuilder: (context, index) => SizedBox(
           height: 14,
         ),
-        itemCount: _shopList[seller_index].cart_items.length,
+        itemCount: _shopList[seller_index].cartItems.length,
         scrollDirection: Axis.vertical,
         physics: NeverScrollableScrollPhysics(),
         shrinkWrap: true,
@@ -590,7 +574,7 @@ class _CartState extends State<Cart> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Container(
-                width: DeviceInfo(context).width!/4,
+                width: DeviceInfo(context).width! / 4,
                 height: 120,
                 child: ClipRRect(
                     borderRadius: BorderRadius.horizontal(
@@ -598,13 +582,13 @@ class _CartState extends State<Cart> {
                     child: FadeInImage.assetNetwork(
                       placeholder: 'assets/placeholder.png',
                       image: _shopList[seller_index]
-                          .cart_items[item_index]
-                          .product_thumbnail_image,
+                          .cartItems[item_index]
+                          .productThumbnailImage,
                       fit: BoxFit.cover,
                     ))),
             Container(
               //color: Colors.red,
-              width: DeviceInfo(context).width!/3,
+              width: DeviceInfo(context).width! / 3,
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 10.0),
                 child: Column(
@@ -612,9 +596,7 @@ class _CartState extends State<Cart> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      _shopList[seller_index]
-                          .cart_items[item_index]
-                          .product_name,
+                      _shopList[seller_index].cartItems[item_index].productName,
                       overflow: TextOverflow.ellipsis,
                       maxLines: 2,
                       style: TextStyle(
@@ -627,14 +609,16 @@ class _CartState extends State<Cart> {
                       child: Row(
                         children: [
                           Text(
-                            SystemConfig.systemCurrency!.symbol!+
-                                (_shopList[seller_index]
-                                            .cart_items[item_index]
-                                            .price *
-                                        _shopList[seller_index]
-                                            .cart_items[item_index]
-                                            .quantity)
-                                    .toStringAsFixed(2),
+                            SystemConfig.systemCurrency != null
+                                ? _shopList[seller_index]
+                                    .cartItems[item_index]
+                                    .price
+                                    .replaceAll(
+                                        SystemConfig.systemCurrency!.code,
+                                        SystemConfig.systemCurrency!.symbol)
+                                : _shopList[seller_index]
+                                    .cart_items[item_index]
+                                    .price,
                             textAlign: TextAlign.left,
                             overflow: TextOverflow.ellipsis,
                             maxLines: 2,
@@ -659,7 +643,7 @@ class _CartState extends State<Cart> {
                   GestureDetector(
                     onTap: () {
                       onPressDelete(
-                          _shopList[seller_index].cart_items[item_index].id);
+                          _shopList[seller_index].cartItems[item_index].id);
                     },
                     child: Container(
                       child: Padding(
@@ -682,7 +666,13 @@ class _CartState extends State<Cart> {
                 children: [
                   GestureDetector(
                     onTap: () {
-                      onQuantityIncrease(seller_index, item_index);
+                      if (_shopList[seller_index]
+                              .cartItems[item_index]
+                              .auctionProduct ==
+                          0) {
+                        onQuantityIncrease(seller_index, item_index);
+                      }
+                      return null;
                     },
                     child: Container(
                       width: 24,
@@ -691,7 +681,12 @@ class _CartState extends State<Cart> {
                           BoxDecorations.buildCartCircularButtonDecoration(),
                       child: Icon(
                         Icons.add,
-                        color: MyTheme.accent_color,
+                        color: _shopList[seller_index]
+                                    .cartItems[item_index]
+                                    .auctionProduct ==
+                                0
+                            ? MyTheme.accent_color
+                            : MyTheme.grey_153,
                         size: 12,
                       ),
                     ),
@@ -700,7 +695,7 @@ class _CartState extends State<Cart> {
                     padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
                     child: Text(
                       _shopList[seller_index]
-                          .cart_items[item_index]
+                          .cartItems[item_index]
                           .quantity
                           .toString(),
                       style:
@@ -709,7 +704,13 @@ class _CartState extends State<Cart> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      onQuantityDecrease(seller_index, item_index);
+                      if (_shopList[seller_index]
+                              .cartItems[item_index]
+                              .auctionProduct ==
+                          0) {
+                        onQuantityDecrease(seller_index, item_index);
+                      }
+                      return null;
                     },
                     child: Container(
                       width: 24,
@@ -718,7 +719,12 @@ class _CartState extends State<Cart> {
                           BoxDecorations.buildCartCircularButtonDecoration(),
                       child: Icon(
                         Icons.remove,
-                        color: MyTheme.accent_color,
+                        color: _shopList[seller_index]
+                                    .cartItems[item_index]
+                                    .auctionProduct ==
+                                0
+                            ? MyTheme.accent_color
+                            : MyTheme.grey_153,
                         size: 12,
                       ),
                     ),

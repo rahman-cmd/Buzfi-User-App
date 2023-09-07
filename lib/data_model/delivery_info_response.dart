@@ -100,6 +100,7 @@ class CartItem {
     this.productId,
     this.productName,
     this.productThumbnailImage,
+    this.isDigital,
   });
 
   var id;
@@ -108,6 +109,7 @@ class CartItem {
   var productId;
   String? productName;
   String? productThumbnailImage;
+  bool? isDigital;
 
   factory CartItem.fromJson(Map<String, dynamic> json) => CartItem(
     id: json["id"],
@@ -116,6 +118,7 @@ class CartItem {
     productId: json["product_id"],
     productName: json["product_name"],
     productThumbnailImage: json["product_thumbnail_image"],
+    isDigital: json["product_is_digital"],
   );
 
   Map<String, dynamic> toJson() => {

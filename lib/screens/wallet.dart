@@ -15,6 +15,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:toast/toast.dart';
 
+import '../helpers/main_helpers.dart';
+
 class Wallet extends StatefulWidget {
   Wallet({Key? key, this.from_recharge = false}) : super(key: key);
   final bool from_recharge;
@@ -138,6 +140,8 @@ class _WalletState extends State<Wallet> {
           Navigator.push(context, MaterialPageRoute(builder: (context) {
             return Main();
           }));
+        } else {
+          Navigator.of(context).pop();
         }
         return Future.delayed(Duration.zero);
       },
@@ -366,7 +370,7 @@ class _WalletState extends State<Wallet> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      _rechargeList[index].amount,
+                      convertPrice(_rechargeList[index].amount),
                       style: TextStyle(
                           color: MyTheme.accent_color,
                           fontSize: 16,
@@ -432,7 +436,7 @@ class _WalletState extends State<Wallet> {
               Padding(
                 padding: const EdgeInsets.only(top: 8.0),
                 child: Text(
-                  _balanceDetails.balance ?? 0 as String,
+                  convertPrice(_balanceDetails.balance),
                   style: TextStyle(
                       color: Colors.white,
                       fontSize: 16,

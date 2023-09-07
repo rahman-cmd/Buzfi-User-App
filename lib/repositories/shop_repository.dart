@@ -23,11 +23,6 @@ class ShopRepository {
         "App-Language": app_language.$!,
       },);
 
-    bool checkResult = ResponseCheck.apply(response.body);
-
-    if(!checkResult)
-      return responseCheckModelFromJson(response.body);
-
     return shopResponseFromJson(response.body);
   }
 
@@ -135,6 +130,17 @@ class ShopRepository {
       },);
     print(response.body);
     return followedSellersResponseFromJson(response.body);
+  }
+
+  Future<ShopResponse> topSellers()async{
+    String url =("${AppConfig.BASE_URL}/seller/top");
+
+    final response = await ApiRequest.get(url: url,
+      headers: {
+        "App-Language": app_language.$!,
+      },);
+
+    return shopResponseFromJson(response.body);
   }
 
 

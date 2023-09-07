@@ -4,10 +4,13 @@ import 'package:active_ecommerce_flutter/app_config.dart';
 import 'package:active_ecommerce_flutter/custom/box_decorations.dart';
 import 'package:active_ecommerce_flutter/custom/btn.dart';
 import 'package:active_ecommerce_flutter/custom/device_info.dart';
+import 'package:active_ecommerce_flutter/custom/lang_text.dart';
+import 'package:active_ecommerce_flutter/custom/quantity_input.dart';
 import 'package:active_ecommerce_flutter/custom/text_styles.dart';
 import 'package:active_ecommerce_flutter/custom/toast_component.dart';
 import 'package:active_ecommerce_flutter/data_model/product_details_response.dart';
 import 'package:active_ecommerce_flutter/helpers/color_helper.dart';
+import 'package:active_ecommerce_flutter/helpers/main_helpers.dart';
 import 'package:active_ecommerce_flutter/helpers/shared_value_helper.dart';
 import 'package:active_ecommerce_flutter/helpers/shimmer_helper.dart';
 import 'package:active_ecommerce_flutter/helpers/system_config.dart';
@@ -32,6 +35,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:photo_view/photo_view.dart';
@@ -67,7 +71,8 @@ class _ProductDetailsState extends State<ProductDetails>
   Animation? _colorTween;
   late AnimationController _ColorAnimationController;
   WebViewController controller = WebViewController()
-    ..setJavaScriptMode(JavaScriptMode.unrestricted);
+    ..setJavaScriptMode(JavaScriptMode.unrestricted)
+    ..enableZoom(false);
   double webViewHeight = 50.0;
 
   CarouselController _carouselController = CarouselController();
@@ -75,7 +80,7 @@ class _ProductDetailsState extends State<ProductDetails>
 
   //init values
 
-  bool? _isInWishList = false;
+  bool _isInWishList = false;
   var _productDetailsFetched = false;
   DetailedProduct? _productDetails;
   var _productImageList = [];
@@ -100,6 +105,7 @@ class _ProductDetailsState extends State<ProductDetails>
 
   @override
   void initState() {
+    quantityText.text = "${_quantity ?? 0}";
     controller;
     _ColorAnimationController =
         AnimationController(vsync: this, duration: Duration(seconds: 0));
@@ -281,6 +287,10 @@ class _ProductDetailsState extends State<ProductDetails>
     }
   }
 
+  setQuantity(quantity) {
+    quantityText.text = "${quantity ?? 0}";
+  }
+
   fetchAndSetVariantWiseInfo({bool change_appbar_string = true}) async {
     var color_string = _colorList.length > 0
         ? _colorList[_selectedColorIndex].toString().replaceAll("#", "")
@@ -316,7 +326,7 @@ class _ProductDetailsState extends State<ProductDetails>
     // }
 
     int pindex = 0;
-    _productDetails!.photos!.forEach((photo) {
+    _productDetails!.photos?.forEach((photo) {
       //print('con:'+ (photo.variant == _variant && variantResponse.image != "").toString());
       if (photo.variant == _variant &&
           variantResponse.variantData!.image != "") {
@@ -325,6 +335,7 @@ class _ProductDetailsState extends State<ProductDetails>
       }
       pindex++;
     });
+    setQuantity(_quantity);
     setState(() {});
   }
 
@@ -476,8 +487,9 @@ class _ProductDetailsState extends State<ProductDetails>
                           ),
                           onPressed: () {
                             onCopyTap(setState);
-                            SocialShare.copyToClipboard(
-                                text: _productDetails!.link);
+                            Clipboard.setData(ClipboardData(text: _productDetails!.link??""));
+                            // SocialShare.copyToClipboard(
+                            //     text: _productDetails!.link, image: "");
                           },
                         ),
                       ),
@@ -945,7 +957,7 @@ class _ProductDetailsState extends State<ProductDetails>
                           child: Center(
                             child: Icon(
                               Icons.favorite,
-                              color: _isInWishList!
+                              color: _isInWishList
                                   ? Color.fromRGBO(230, 46, 4, 1)
                                   : MyTheme.dark_font_grey,
                               size: 16,
@@ -1589,13 +1601,22 @@ class _ProductDetailsState extends State<ProductDetails>
             mainAxisSize: MainAxisSize.max,
             children: [
               buildQuantityDownButton(),
-              Container(
+              /* Container(
                   width: 36,
                   child: Center(
                       child: Text(
                     _quantity.toString(),
                     style: TextStyle(fontSize: 18, color: MyTheme.dark_grey),
-                  ))),
+                  ))),*/
+              Container(
+                  width: 36,
+                  child: Center(
+                      child: QuantityInputField.show(quantityText,
+                          isDisable: _quantity == 0, onSubmitted: () {
+                    _quantity = int.parse(quantityText.text);
+                    print(_quantity);
+                    fetchAndSetVariantWiseInfo();
+                  }))),
               buildQuantityUpButton()
             ],
           ),
@@ -1611,6 +1632,8 @@ class _ProductDetailsState extends State<ProductDetails>
       ],
     );
   }
+
+  TextEditingController quantityText = TextEditingController(text: "0");
 
   Padding buildVariantShimmers() {
     return Padding(
@@ -1929,56 +1952,50 @@ class _ProductDetailsState extends State<ProductDetails>
   }
 
   Widget buildWholeSaleQuantityPrice() {
-    return Row(
-      children: [
-        DataTable(
-          columns: [
-            DataColumn(
-                label: Text('Min Qty',
-                    style: TextStyle(fontSize: 12, color: MyTheme.dark_grey))),
-            DataColumn(
-                label: Text('Max Qty',
-                    style: TextStyle(fontSize: 12, color: MyTheme.dark_grey))),
-            DataColumn(
-                label: Text('Unit Price',
-                    style: TextStyle(fontSize: 12, color: MyTheme.dark_grey))),
-          ],
-          rows: List<DataRow>.generate(
-            _productDetails!.wholesale!.length,
-            (index) {
-              return DataRow(cells: <DataCell>[
-                DataCell(
-                  Text(
-                    '${_productDetails!.wholesale![index].minQty.toString()}',
-                    style: TextStyle(
-                        color: Color.fromRGBO(152, 152, 153, 1), fontSize: 12),
-                  ),
-                ),
-                DataCell(
-                  Text(
-                    '${_productDetails!.wholesale![index].maxQty.toString()}',
-                    style: TextStyle(
-                        color: Color.fromRGBO(152, 152, 153, 1), fontSize: 12),
-                  ),
-                ),
-                DataCell(
-                  Text(
-                    SystemConfig.systemCurrency != null
-                        ? _productDetails!.wholesale![index].price
-                            .toString()
-                            .replaceAll(SystemConfig.systemCurrency!.code!,
-                                SystemConfig.systemCurrency!.symbol!)
-                        : SystemConfig.systemCurrency!.symbol! +
-                            _productDetails!.wholesale![index].price.toString(),
-                    style: TextStyle(
-                        color: Color.fromRGBO(152, 152, 153, 1), fontSize: 12),
-                  ),
-                ),
-              ]);
-            },
-          ),
-        )
+    return DataTable(
+      // clipBehavior:Clip.antiAliasWithSaveLayer,
+      columnSpacing: DeviceInfo(context).width! * 0.125,
+
+      columns: [
+        DataColumn(
+            label: Text(LangText(context).local.min_qty_ucf,
+                style: TextStyle(fontSize: 12, color: MyTheme.dark_grey))),
+        DataColumn(
+            label: Text(LangText(context).local.max_qty_ucf,
+                style: TextStyle(fontSize: 12, color: MyTheme.dark_grey))),
+        DataColumn(
+            label: Text(LangText(context).local.unit_price_ucf,
+                style: TextStyle(fontSize: 12, color: MyTheme.dark_grey))),
       ],
+      rows: List<DataRow>.generate(
+        _productDetails!.wholesale!.length,
+        (index) {
+          return DataRow(cells: <DataCell>[
+            DataCell(
+              Text(
+                '${_productDetails!.wholesale![index].minQty.toString()}',
+                style: TextStyle(
+                    color: Color.fromRGBO(152, 152, 153, 1), fontSize: 12),
+              ),
+            ),
+            DataCell(
+              Text(
+                '${_productDetails!.wholesale![index].maxQty.toString()}',
+                style: TextStyle(
+                    color: Color.fromRGBO(152, 152, 153, 1), fontSize: 12),
+              ),
+            ),
+            DataCell(
+              Text(
+                convertPrice(
+                    _productDetails!.wholesale![index].price.toString()),
+                style: TextStyle(
+                    color: Color.fromRGBO(152, 152, 153, 1), fontSize: 12),
+              ),
+            ),
+          ]);
+        },
+      ),
     );
   }
 
@@ -2065,6 +2082,14 @@ class _ProductDetailsState extends State<ProductDetails>
             ),
           ),
         ),
+        Text(
+          "/${_productDetails!.unit}",
+          // _singlePriceString,
+          style: TextStyle(
+              color: MyTheme.accent_color,
+              fontSize: 16.0,
+              fontWeight: FontWeight.w600),
+        ),
       ],
     );
   }
@@ -2123,6 +2148,7 @@ class _ProductDetailsState extends State<ProductDetails>
             child: Container(
               margin: EdgeInsets.only(
                 left: 18,
+                right: 18,
               ),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(6.0),
@@ -2327,8 +2353,7 @@ class _ProductDetailsState extends State<ProductDetails>
         : Container();
   }
 
-  Widget buildExpandableDescription() {
-    print(_productDetails!.description);
+   buildExpandableDescription(){
     return Container(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
@@ -2345,9 +2370,14 @@ class _ProductDetailsState extends State<ProductDetails>
                 if (webViewHeight == 50) {
                   webViewHeight = double.parse(
                     (await controller.runJavaScriptReturningResult(
-                            "document.getElementById('scaled-frame').clientHeight"))
+                        "document.getElementById('scaled-frame').clientHeight"))
                         .toString(),
                   );
+                  print(webViewHeight);
+                  print(MediaQuery.of(context).devicePixelRatio);
+
+                  webViewHeight =( webViewHeight / MediaQuery.of(context).devicePixelRatio)+50;
+                  print(webViewHeight);
                 } else {
                   webViewHeight = 50;
                 }
@@ -2792,39 +2822,21 @@ class _ProductDetailsState extends State<ProductDetails>
 <html>
 
 <head>
-  <title>Title of the document</title>
+    <link rel="stylesheet" href="${AppConfig.RAW_BASE_URL}/public/assets/css/vendors.css">
   <style>
   *{
-  margin:0;
-  padding:0;
+  margin:0 !important;
+  padding:0 !important;
+  font-size:120% !important;
+  
   }
-    #wrap {
-      padding: 0;
-      overflow: hidden;
-    }
-    #scaled-frame {
-      zoom: 2;
-      -moz-transform: scale(2);
-      -moz-transform-origin: 0 0;
-      -o-transform: scale(2);
-      -o-transform-origin: 0 0;
-      -webkit-transform: scale(2);
-      -webkit-transform-origin: 0 0;
-    }
-    #scaled-frame {
-      border: 0px;      
-    }
 
-    @media screen and (-webkit-min-device-pixel-ratio:0) {
-      #scaled-frame {
-        zoom: 2;
-      }
-
+    #scaled-frame {
     }
   </style>
 </head>
 
-<body>
+<body id="main_id">
   <div id="scaled-frame">
 $string
   </div>

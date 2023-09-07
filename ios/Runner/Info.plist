@@ -28,7 +28,7 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>com.googleusercontent.apps.620463100599-ddb91en0ain1g4lim7ub25ced6lm6flr</string>
-				<string>fb</string>
+				<string>fbXXXXXXXXX</string>
 			</array>
 		</dict>
 	</array>
@@ -39,9 +39,9 @@
 	<key>FDMaximumConcurrentTasks</key>
 	<integer>5</integer>
 	<key>FacebookAppID</key>
-    <string></string>
+    <string>XXXXXXXXX</string>
     <key>FacebookClientToken</key>
-    <string></string>
+    <string>XXXXXXXXX</string>
     <key>FacebookDisplayName</key>
     <string>Active Ecommerce</string>
 	<key>LSApplicationCategoryType</key>

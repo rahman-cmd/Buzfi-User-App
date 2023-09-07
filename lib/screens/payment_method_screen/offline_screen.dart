@@ -132,8 +132,7 @@ class _OfflineState extends State<OfflineScreen> {
         }));
       }
     } else if (widget.offLinePaymentFor == PaymentFor.PackagePay) {
-      var submitResponse = await CustomerPackageRepository()
-          .offlinePackagePayment(
+      var submitResponse = await CustomerPackageRepository().offlinePackagePayment(
               packageId: widget.packageId,
               method: widget.paymentMethod,
               trx_id: trx_id,
