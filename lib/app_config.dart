@@ -19,7 +19,7 @@ class AppConfig {
   // static const bool HTTPS = false;
   static const bool HTTPS = true;
 
-  static const DOMAIN_PATH = "multi.buzfi.com"; //localhost
+  static const DOMAIN_PATH = "buzfi.com"; //localhost
 
   //do not configure these below
   static const String API_ENDPATH = "api/v2";

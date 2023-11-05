@@ -9,7 +9,7 @@ class PaymentMethod{
 
 List<PaymentMethod> paymentMethodList = [
   PaymentMethod(id:"1",key:"paypal",name:"Checkout with Paypal",image: "dummy_assets/paypal.png"),
-  PaymentMethod(id:"2",key:"stripe",name:"Checkout with Stripe",image: "dummy_assets/stripe.png"),
+  PaymentMethod(id:"2",key:"stripe",name:"Checkout with Card",image: "dummy_assets/stripe.png"),
   PaymentMethod(id:"3",key:"flutterwave",name:"Checkout with Flutterwave",image: "dummy_assets/flutterwave.png"),
   PaymentMethod(id:"4",key:"iyzico",name:"Checkout with IYZICO",image: "dummy_assets/iyzico.png"),
   PaymentMethod(id:"5",key:"mpesa",name:"Checkout with Mpesa",image: "dummy_assets/mpesa.png"),

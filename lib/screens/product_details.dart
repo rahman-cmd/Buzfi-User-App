@@ -487,7 +487,8 @@ class _ProductDetailsState extends State<ProductDetails>
                           ),
                           onPressed: () {
                             onCopyTap(setState);
-                            Clipboard.setData(ClipboardData(text: _productDetails!.link??""));
+                            Clipboard.setData(ClipboardData(
+                                text: _productDetails!.link ?? ""));
                             // SocialShare.copyToClipboard(
                             //     text: _productDetails!.link, image: "");
                           },
@@ -1763,7 +1764,7 @@ class _ProductDetailsState extends State<ProductDetails>
             width: MediaQuery.of(context).size.width - (107 + 45),
             child: Scrollbar(
               controller: _variantScrollController,
-              isAlwaysShown: false,
+              thumbVisibility: false,
               child: Wrap(
                 children: List.generate(
                     choice_options[choice_options_index].options.length,
@@ -2353,7 +2354,7 @@ class _ProductDetailsState extends State<ProductDetails>
         : Container();
   }
 
-   buildExpandableDescription(){
+  buildExpandableDescription() {
     return Container(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
@@ -2370,13 +2371,15 @@ class _ProductDetailsState extends State<ProductDetails>
                 if (webViewHeight == 50) {
                   webViewHeight = double.parse(
                     (await controller.runJavaScriptReturningResult(
-                        "document.getElementById('scaled-frame').clientHeight"))
+                            "document.getElementById('scaled-frame').clientHeight"))
                         .toString(),
                   );
                   print(webViewHeight);
                   print(MediaQuery.of(context).devicePixelRatio);
 
-                  webViewHeight =( webViewHeight / MediaQuery.of(context).devicePixelRatio)+50;
+                  webViewHeight = (webViewHeight /
+                          MediaQuery.of(context).devicePixelRatio) +
+                      50;
                   print(webViewHeight);
                 } else {
                   webViewHeight = 50;
@@ -2668,7 +2671,7 @@ class _ProductDetailsState extends State<ProductDetails>
             width: 64,
             child: Scrollbar(
               controller: _imageScrollController,
-              isAlwaysShown: false,
+              thumbVisibility: false,
               thickness: 4.0,
               child: Padding(
                 padding: app_language_rtl.$!
