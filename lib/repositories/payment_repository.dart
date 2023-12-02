@@ -21,54 +21,53 @@ import 'package:active_ecommerce_flutter/data_model/nagad_payment_process_respon
 import 'package:active_ecommerce_flutter/data_model/sslcommerz_begin_response.dart';
 
 class PaymentRepository {
-  Future<dynamic> getPaymentResponseList(
-      {mode = "", list = "both"}) async {
-    String url=(
-        "${AppConfig.BASE_URL}/payment-types?mode=${mode}&list=${list}");
+  Future<dynamic> getPaymentResponseList({mode = "", list = "both"}) async {
+    String url =
+        ("${AppConfig.BASE_URL}/payment-types?mode=${mode}&list=${list}");
 
+    final response = await ApiRequest.get(
+        url: url,
+        headers: {
+          "App-Language": app_language.$!,
+          "Authorization": "Bearer ${access_token.$}",
+          "App-Language": app_language.$!,
+        },
+        middleware: BannedUser());
 
-    final response = await ApiRequest.get(url: url, headers: {
-      "App-Language": app_language.$!,
-      "Authorization": "Bearer ${access_token.$}",
-      "App-Language": app_language.$!,
-    },middleware: BannedUser());
-    
     return paymentTypeResponseFromJson(response.body);
   }
 
-  Future<dynamic> getOrderCreateResponse(
-       payment_method) async {
+  Future<dynamic> getOrderCreateResponse(payment_method) async {
     var post_body = jsonEncode({"payment_type": "${payment_method}"});
 
-    String url=("${AppConfig.BASE_URL}/order/store");
-    final response = await ApiRequest.post(url:url,
+    String url = ("${AppConfig.BASE_URL}/order/store");
+    final response = await ApiRequest.post(
+        url: url,
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Bearer ${access_token.$}",
           "App-Language": app_language.$!,
         },
-        body: post_body,middleware: BannedUser());
+        body: post_body,
+        middleware: BannedUser());
 
     return orderCreateResponseFromJson(response.body);
   }
 
-  Future<PaypalUrlResponse> getPaypalUrlResponse( String payment_type,
-       int? combined_order_id,  var package_id,  double? amount) async {
-    String url=(
-      "${AppConfig.BASE_URL}/paypal/payment/url?payment_type=${payment_type}&combined_order_id=${combined_order_id}&amount=${amount}&user_id=${user_id.$}&package_id=$package_id");
+  Future<PaypalUrlResponse> getPaypalUrlResponse(String payment_type,
+      int? combined_order_id, var package_id, double? amount) async {
+    String url =
+        ("${AppConfig.BASE_URL}/paypal/payment/url?payment_type=${payment_type}&combined_order_id=${combined_order_id}&amount=${amount}&user_id=${user_id.$}&package_id=$package_id");
     final response = await ApiRequest.get(url: url, headers: {
       "App-Language": app_language.$!,
     });
     return paypalUrlResponseFromJson(response.body);
   }
 
-  Future<FlutterwaveUrlResponse> getFlutterwaveUrlResponse(
-       String payment_type,
-       int? combined_order_id,
-       var package_id,
-       double? amount) async {
-    String url=(
-        "${AppConfig.BASE_URL}/flutterwave/payment/url?payment_type=${payment_type}&combined_order_id=${combined_order_id}&amount=${amount}&user_id=${user_id.$}&package_id=$package_id");
+  Future<FlutterwaveUrlResponse> getFlutterwaveUrlResponse(String payment_type,
+      int? combined_order_id, var package_id, double? amount) async {
+    String url =
+        ("${AppConfig.BASE_URL}/flutterwave/payment/url?payment_type=${payment_type}&combined_order_id=${combined_order_id}&amount=${amount}&user_id=${user_id.$}&package_id=$package_id");
 
     final response = await ApiRequest.get(url: url, headers: {
       "App-Language": app_language.$!,
@@ -78,8 +77,8 @@ class PaymentRepository {
   }
 
   Future<dynamic> getOrderCreateResponseFromWallet(
-       payment_method,  double? amount) async {
-    String url=("${AppConfig.BASE_URL}/payments/pay/wallet");
+      payment_method, double? amount) async {
+    String url = ("${AppConfig.BASE_URL}/payments/pay/wallet");
 
     var post_body = jsonEncode({
       "user_id": "${user_id.$}",
@@ -87,61 +86,64 @@ class PaymentRepository {
       "amount": "${amount}"
     });
 
-    final response = await ApiRequest.post(url:url,
+    final response = await ApiRequest.post(
+        url: url,
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Bearer ${access_token.$}",
           "App-Language": app_language.$!
         },
-
-        body: post_body,middleware: BannedUser());
-
+        body: post_body,
+        middleware: BannedUser());
 
     return orderCreateResponseFromJson(response.body);
   }
 
-  Future<dynamic> getOrderCreateResponseFromCod(
-       payment_method) async {
+  Future<dynamic> getOrderCreateResponseFromCod(payment_method) async {
     var post_body = jsonEncode(
         {"user_id": "${user_id.$}", "payment_type": "${payment_method}"});
 
-    String url=("${AppConfig.BASE_URL}/payments/pay/cod");
+    String url = ("${AppConfig.BASE_URL}/payments/pay/cod");
 
     print(url);
-    final response = await ApiRequest.post(url:url,
+    final response = await ApiRequest.post(
+        url: url,
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Bearer ${access_token.$}"
         },
-        body: post_body,middleware: BannedUser());
+        body: post_body,
+        middleware: BannedUser());
     print(response.body);
 
     return orderCreateResponseFromJson(response.body);
   }
 
   Future<dynamic> getOrderCreateResponseFromManualPayment(
-       payment_method) async {
+      payment_method) async {
     var post_body = jsonEncode(
         {"user_id": "${user_id.$}", "payment_type": "${payment_method}"});
 
-    String url=("${AppConfig.BASE_URL}/payments/pay/manual");
+    String url = ("${AppConfig.BASE_URL}/payments/pay/manual");
 
-    final response = await ApiRequest.post(url:url,
+    final response = await ApiRequest.post(
+        url: url,
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Bearer ${access_token.$}",
           "App-Language": app_language.$!
         },
-        body: post_body,middleware: BannedUser());
+        body: post_body,
+        middleware: BannedUser());
 
     return orderCreateResponseFromJson(response.body);
   }
 
   Future<RazorpayPaymentSuccessResponse> getRazorpayPaymentSuccessResponse(
-       payment_type,
-       double? amount,
-       int? combined_order_id,
-       String? payment_details) async {
+      payment_type,
+      double? amount,
+      int? combined_order_id,
+      String? payment_details) async {
     var post_body = jsonEncode({
       "user_id": "${user_id.$}",
       "payment_type": "${payment_type}",
@@ -150,9 +152,10 @@ class PaymentRepository {
       "payment_details": "${payment_details}"
     });
 
-    String url=("${AppConfig.BASE_URL}/razorpay/success");
+    String url = ("${AppConfig.BASE_URL}/razorpay/success");
 
-    final response = await ApiRequest.post(url:url,
+    final response = await ApiRequest.post(
+        url: url,
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Bearer ${access_token.$}",
@@ -164,10 +167,10 @@ class PaymentRepository {
   }
 
   Future<PaystackPaymentSuccessResponse> getPaystackPaymentSuccessResponse(
-       payment_type,
-       double? amount,
-       int? combined_order_id,
-       String? payment_details) async {
+      payment_type,
+      double? amount,
+      int? combined_order_id,
+      String? payment_details) async {
     var post_body = jsonEncode({
       "user_id": "${user_id.$}",
       "payment_type": "${payment_type}",
@@ -176,8 +179,9 @@ class PaymentRepository {
       "payment_details": "${payment_details}"
     });
 
-    String url=("${AppConfig.BASE_URL}/paystack/success");
-    final response = await ApiRequest.post(url:url,
+    String url = ("${AppConfig.BASE_URL}/paystack/success");
+    final response = await ApiRequest.post(
+        url: url,
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Bearer ${access_token.$}"
@@ -188,10 +192,10 @@ class PaymentRepository {
   }
 
   Future<IyzicoPaymentSuccessResponse> getIyzicoPaymentSuccessResponse(
-       payment_type,
-       double? amount,
-       int? combined_order_id,
-       String? payment_details) async {
+      payment_type,
+      double? amount,
+      int? combined_order_id,
+      String? payment_details) async {
     var post_body = jsonEncode({
       "user_id": "${user_id.$}",
       "payment_type": "${payment_type}",
@@ -200,8 +204,9 @@ class PaymentRepository {
       "payment_details": "${payment_details}"
     });
 
-    String url=("${AppConfig.BASE_URL}/paystack/success");
-    final response = await ApiRequest.post(url:url,
+    String url = ("${AppConfig.BASE_URL}/paystack/success");
+    final response = await ApiRequest.post(
+        url: url,
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Bearer ${access_token.$}"
@@ -211,25 +216,21 @@ class PaymentRepository {
     return iyzicoPaymentSuccessResponseFromJson(response.body);
   }
 
-  Future<BkashBeginResponse> getBkashBeginResponse(
-       String payment_type,
-       int? combined_order_id,
-       var package_id,
-       double? amount) async {
-    String url=(
-        "${AppConfig.BASE_URL}/bkash/begin?payment_type=${payment_type}&combined_order_id=${combined_order_id}&amount=${amount}&user_id=${user_id.$}&package_id=${package_id}");
+  Future<BkashBeginResponse> getBkashBeginResponse(String payment_type,
+      int? combined_order_id, var package_id, double? amount) async {
+    String url =
+        ("${AppConfig.BASE_URL}/bkash/begin?payment_type=${payment_type}&combined_order_id=${combined_order_id}&amount=${amount}&user_id=${user_id.$}&package_id=${package_id}");
 
     print(url.toString());
     final response = await ApiRequest.get(
-      url:url,
+      url: url,
       headers: {"Authorization": "Bearer ${access_token.$}"},
     );
 
     return bkashBeginResponseFromJson(response.body);
   }
 
-  Future<BkashPaymentProcessResponse> getBkashPaymentProcessResponse(
-      {
+  Future<BkashPaymentProcessResponse> getBkashPaymentProcessResponse({
     required payment_type,
     required double? amount,
     required int? combined_order_id,
@@ -247,8 +248,9 @@ class PaymentRepository {
       "token": "${token}"
     });
 
-    String url=("${AppConfig.BASE_URL}/bkash/api/success");
-    final response = await ApiRequest.post(url:url,
+    String url = ("${AppConfig.BASE_URL}/bkash/api/success");
+    final response = await ApiRequest.post(
+        url: url,
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Bearer ${access_token.$}",
@@ -260,15 +262,15 @@ class PaymentRepository {
   }
 
   Future<SslcommerzBeginResponse> getSslcommerzBeginResponse(
-       String payment_type,
-       int? combined_order_id,
-       var package_id,
-       double? amount) async {
-    String url=(
-        "${AppConfig.BASE_URL}/sslcommerz/begin?payment_type=${payment_type}&combined_order_id=${combined_order_id}&amount=${amount}&user_id=${user_id.$}&package_id=$package_id");
+      String payment_type,
+      int? combined_order_id,
+      var package_id,
+      double? amount) async {
+    String url =
+        ("${AppConfig.BASE_URL}/sslcommerz/begin?payment_type=${payment_type}&combined_order_id=${combined_order_id}&amount=${amount}&user_id=${user_id.$}&package_id=$package_id");
 
     final response = await ApiRequest.get(
-      url:url,
+      url: url,
       headers: {
         "Authorization": "Bearer ${access_token.$}",
         "App-Language": app_language.$!
@@ -278,16 +280,13 @@ class PaymentRepository {
     return sslcommerzBeginResponseFromJson(response.body);
   }
 
-  Future<NagadBeginResponse> getNagadBeginResponse(
-       String payment_type,
-       int? combined_order_id,
-       var package_id,
-       double? amount) async {
-    String url=(
-        "${AppConfig.BASE_URL}/nagad/begin?payment_type=${payment_type}&combined_order_id=${combined_order_id}&amount=${amount}&user_id=${user_id.$}&package_id=$package_id");
+  Future<NagadBeginResponse> getNagadBeginResponse(String payment_type,
+      int? combined_order_id, var package_id, double? amount) async {
+    String url =
+        ("${AppConfig.BASE_URL}/nagad/begin?payment_type=${payment_type}&combined_order_id=${combined_order_id}&amount=${amount}&user_id=${user_id.$}&package_id=$package_id");
 
     final response = await ApiRequest.get(
-      url:url,
+      url: url,
       headers: {
         "Authorization": "Bearer ${access_token.$}",
         "App-Language": app_language.$!
@@ -298,10 +297,10 @@ class PaymentRepository {
   }
 
   Future<NagadPaymentProcessResponse> getNagadPaymentProcessResponse(
-       payment_type,
-       double? amount,
-       int? combined_order_id,
-       String? payment_details) async {
+      payment_type,
+      double? amount,
+      int? combined_order_id,
+      String? payment_details) async {
     var post_body = jsonEncode({
       "user_id": "${user_id.$}",
       "payment_type": "${payment_type}",
@@ -310,9 +309,10 @@ class PaymentRepository {
       "payment_details": "${payment_details}"
     });
 
-    String url=("${AppConfig.BASE_URL}/nagad/process");
+    String url = ("${AppConfig.BASE_URL}/nagad/process");
 
-    final response = await ApiRequest.post(url:url,
+    final response = await ApiRequest.post(
+        url: url,
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Bearer ${access_token.$}",

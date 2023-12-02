@@ -44,9 +44,8 @@ class _StripeScreenState extends State<StripeScreen> {
 
     if (widget.payment_type == "cart_payment") {
       createOrder();
-    }else{
-    stripe();
-
+    } else {
+      stripe();
     }
   }
 
@@ -95,13 +94,13 @@ class _StripeScreenState extends State<StripeScreen> {
     _order_init = true;
     setState(() {});
     stripe();
-
   }
 
   @override
   Widget build(BuildContext context) {
     return Directionality(
-      textDirection: app_language_rtl.$! ? TextDirection.rtl : TextDirection.ltr,
+      textDirection:
+          app_language_rtl.$! ? TextDirection.rtl : TextDirection.ltr,
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: buildAppBar(context),

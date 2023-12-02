@@ -348,59 +348,6 @@ class _CartState extends State<Cart> {
             ),
             Row(
               children: [
-                // Padding(
-                //   padding: const EdgeInsets.only(top: 8.0),
-                //   child: Container(
-                //     width: (MediaQuery.of(context).size.width - 48) * (1 / 3),
-                //     height: 58,
-                //     decoration: BoxDecoration(
-                //         color: Colors.white,
-                //         // border:
-                //         //     Border.all(color: MyTheme.accent_color, width: 1),
-                //         borderRadius: app_language_rtl.$!
-                //             ? const BorderRadius.only(
-                //                 topLeft: const Radius.circular(0.0),
-                //                 bottomLeft: const Radius.circular(0.0),
-                //                 topRight: const Radius.circular(6.0),
-                //                 bottomRight: const Radius.circular(6.0),
-                //               )
-                //             : const BorderRadius.only(
-                //                 topLeft: const Radius.circular(6.0),
-                //                 bottomLeft: const Radius.circular(6.0),
-                //                 topRight: const Radius.circular(0.0),
-                //                 bottomRight: const Radius.circular(0.0),
-                //               )),
-                //     child: Btn.basic(
-                //       minWidth: MediaQuery.of(context).size.width,
-                //       color: MyTheme.soft_accent_color,
-                //       shape: app_language_rtl.$!
-                //           ? RoundedRectangleBorder(
-                //               borderRadius: const BorderRadius.only(
-                //               topLeft: const Radius.circular(0.0),
-                //               bottomLeft: const Radius.circular(0.0),
-                //               topRight: const Radius.circular(6.0),
-                //               bottomRight: const Radius.circular(6.0),
-                //             ))
-                //           : RoundedRectangleBorder(
-                //               borderRadius: const BorderRadius.only(
-                //               topLeft: const Radius.circular(6.0),
-                //               bottomLeft: const Radius.circular(6.0),
-                //               topRight: const Radius.circular(0.0),
-                //               bottomRight: const Radius.circular(0.0),
-                //             )),
-                //       child: Text(
-                //         AppLocalizations.of(context)!.update_cart_ucf,
-                //         style: TextStyle(
-                //             color: MyTheme.dark_font_grey,
-                //             fontSize: 13,
-                //             fontWeight: FontWeight.w700),
-                //       ),
-                //       onPressed: () {
-                //         onPressUpdate();
-                //       },
-                //     ),
-                //   ),
-                // ),
                 Padding(
                   padding: const EdgeInsets.only(top: 8.0),
                   child: Container(

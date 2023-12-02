@@ -17,15 +17,13 @@ class OrderRepository {
     String url = ("${AppConfig.BASE_URL}/purchase-history" +
         "?page=${page}&payment_status=${payment_status}&delivery_status=${delivery_status}");
 
-    Map<String,String> header = commonHeader;
+    Map<String, String> header = commonHeader;
 
     header.addAll(authHeader);
     header.addAll(currencyHeader);
 
     final response = await ApiRequest.get(
-        url: url,
-        headers: header,
-        middleware: BannedUser());
+        url: url, headers: header, middleware: BannedUser());
 
     return orderMiniResponseFromJson(response.body);
   }
@@ -34,15 +32,13 @@ class OrderRepository {
     String url =
         ("${AppConfig.BASE_URL}/purchase-history-details/" + id.toString());
 
-    Map<String,String> header = commonHeader;
+    Map<String, String> header = commonHeader;
 
     header.addAll(authHeader);
     header.addAll(currencyHeader);
 
     final response = await ApiRequest.get(
-        url: url,
-        headers:header,
-        middleware: BannedUser());
+        url: url, headers: header, middleware: BannedUser());
     return orderDetailResponseFromJson(response.body);
   }
 
@@ -77,15 +73,13 @@ class OrderRepository {
   Future<dynamic> getOrderItems({int? id = 0}) async {
     String url =
         ("${AppConfig.BASE_URL}/purchase-history-items/" + id.toString());
-    Map<String,String> header = commonHeader;
+    Map<String, String> header = commonHeader;
 
     header.addAll(authHeader);
     header.addAll(currencyHeader);
 
     final response = await ApiRequest.get(
-        url: url,
-        headers: header,
-        middleware: BannedUser());
+        url: url, headers: header, middleware: BannedUser());
 
     return orderItemlResponseFromJson(response.body);
   }
@@ -94,15 +88,13 @@ class OrderRepository {
     page = 1,
   }) async {
     String url = ("${AppConfig.BASE_URL}/digital/purchased-list?page=$page");
-    Map<String,String> header = commonHeader;
+    Map<String, String> header = commonHeader;
 
     header.addAll(authHeader);
     header.addAll(currencyHeader);
 
     final response = await ApiRequest.get(
-        url: url,
-        headers: header,
-        middleware: BannedUser());
+        url: url, headers: header, middleware: BannedUser());
 
     return purchasedDigitalProductResponseFromJson(response.body);
   }

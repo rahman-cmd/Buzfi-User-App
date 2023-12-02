@@ -1,5 +1,4 @@
 import 'package:active_ecommerce_flutter/custom/btn.dart';
-import 'package:active_ecommerce_flutter/custom/device_info.dart';
 import 'package:active_ecommerce_flutter/custom/lang_text.dart';
 import 'package:active_ecommerce_flutter/custom/toast_component.dart';
 import 'package:active_ecommerce_flutter/custom/useful_elements.dart';
@@ -8,22 +7,56 @@ import 'package:active_ecommerce_flutter/helpers/shimmer_helper.dart';
 import 'package:active_ecommerce_flutter/my_theme.dart';
 import 'package:active_ecommerce_flutter/repositories/address_repository.dart';
 import 'package:active_ecommerce_flutter/screens/address.dart';
-import 'package:active_ecommerce_flutter/screens/shipping_info.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'package:toast/toast.dart';
 
+import '../custom/enum_classes.dart';
+import '../repositories/cart_repository.dart';
+import 'checkout.dart';
+import 'payment_method_screen/stripe_screen.dart';
+import 'shipping_info.dart';
 
 class SelectAddress extends StatefulWidget {
   int? owner_id;
-   SelectAddress({Key? key,this.owner_id}) : super(key: key);
+  int? order_id; // only need when making manual payment from order details
+  String list;
+  //final OffLinePaymentFor offLinePaymentFor;
+  final PaymentFor? paymentFor;
+  final double rechargeAmount;
+  final String? title;
+  var packageId;
+
+  SelectAddress(
+      {Key? key,
+      this.owner_id,
+      this.order_id = 0,
+      this.paymentFor,
+      this.list = "both",
+      //this.offLinePaymentFor,
+      this.rechargeAmount = 0.0,
+      this.title,
+      this.packageId = 0})
+      : super(key: key);
 
   @override
   State<SelectAddress> createState() => _SelectAddressState();
 }
 
 class _SelectAddressState extends State<SelectAddress> {
+  String? _totalString = ". . .";
+  double? _grandTotalValue = 0.00;
+  String? _subTotalString = ". . .";
+  String? _taxString = ". . .";
+  String _shippingCostString = ". . .";
+  String? _discountString = ". . .";
+  String _used_coupon_code = "";
+  bool? _coupon_applied = false;
+  late BuildContext loadingcontext;
+  String payment_type = "cart_payment";
+
   ScrollController _mainScrollController = ScrollController();
 
   // integer type variables
@@ -41,16 +74,18 @@ class _SelectAddressState extends State<SelectAddress> {
   bool isVisible = true;
   bool _faceData = false;
 
+  // send as gift checkbox value
+  bool _sendAsGift = false;
+
   //double variables
   double mWidth = 0;
   double mHeight = 0;
-
-
 
   fetchAll() {
     if (is_logged_in.$ == true) {
       fetchShippingAddressList();
       //fetchPickupPoints();
+      fetchSummary();
     }
     setState(() {});
   }
@@ -70,10 +105,8 @@ class _SelectAddressState extends State<SelectAddress> {
     _faceData = true;
     setState(() {});
 
-   // getSetShippingCost();
+    // getSetShippingCost();
   }
-
-
 
   reset() {
     _shippingAddressList.clear();
@@ -98,11 +131,23 @@ class _SelectAddressState extends State<SelectAddress> {
     fetchAll();
   }
 
+  fetchSummary() async {
+    var cartSummaryResponse = await CartRepository().getCartSummaryResponse();
 
+    if (cartSummaryResponse != null) {
+      _subTotalString = cartSummaryResponse.sub_total;
+      _taxString = cartSummaryResponse.tax;
+      _shippingCostString = cartSummaryResponse.shipping_cost;
+      _discountString = cartSummaryResponse.discount;
+      _totalString = cartSummaryResponse.grand_total;
+      _grandTotalValue = cartSummaryResponse.grand_total_value;
+      _used_coupon_code = cartSummaryResponse.coupon_code ?? _used_coupon_code;
+      _coupon_applied = cartSummaryResponse.coupon_applied;
+      setState(() {});
+    }
+  }
 
   onPressProceed(context) async {
-
-
     if (_seleted_shipping_address == 0) {
       ToastComponent.showDialog(
           LangText(context).local!.choose_an_address_or_pickup_point,
@@ -117,7 +162,7 @@ class _SelectAddressState extends State<SelectAddress> {
       print(_seleted_shipping_address.toString() + "dddd");
       addressUpdateInCartResponse = await AddressRepository()
           .getAddressUpdateInCartResponse(
-          address_id: _seleted_shipping_address);
+              address_id: _seleted_shipping_address);
     }
     if (addressUpdateInCartResponse.result == false) {
       ToastComponent.showDialog(addressUpdateInCartResponse.message,
@@ -129,17 +174,25 @@ class _SelectAddressState extends State<SelectAddress> {
         gravity: Toast.center, duration: Toast.lengthLong);
 
     Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return ShippingInfo();
+      // return ShippingInfo();
+      // return ShippingInfo(
+      //   title: AppLocalizations.of(context)!.checkout_ucf,
+      //   paymentFor: PaymentFor.Order,
+      // );
+      // return StripeScreen(
+      //   amount: _grandTotalValue,
+      //   payment_type: payment_type,
+      //   payment_method_key: 'stripe',
+      //   package_id: widget.packageId.toString(),
+      // );
+      return Checkout(
+        title: AppLocalizations.of(context)!.checkout_ucf,
+        paymentFor: PaymentFor.Order,
+      );
     })).then((value) {
       onPopped(value);
     });
-    // } else if (_seleted_shipping_pickup_point != 0) {
-    //   print("Selected pickup point ");
-    // } else {
-    //   print("..........something is wrong...........");
-    // }
   }
-
 
   @override
   void initState() {
@@ -156,21 +209,24 @@ class _SelectAddressState extends State<SelectAddress> {
     _mainScrollController.dispose();
   }
 
-
   @override
   Widget build(BuildContext context) {
     mHeight = MediaQuery.of(context).size.height;
     mWidth = MediaQuery.of(context).size.width;
     return Directionality(
-      textDirection: app_language_rtl.$! ? TextDirection.rtl : TextDirection.ltr,
+      textDirection:
+          app_language_rtl.$! ? TextDirection.rtl : TextDirection.ltr,
       child: Scaffold(
-          appBar:AppBar(
-            elevation: 0,
-            leading: UsefulElements.backButton(context),
-            backgroundColor: MyTheme.white,title: buildAppbarTitle(context),),
-          backgroundColor: Colors.white,
-          bottomNavigationBar: buildBottomAppBar(context),
-          body: buildBody(context),),
+        appBar: AppBar(
+          elevation: 0,
+          leading: UsefulElements.backButton(context),
+          backgroundColor: MyTheme.white,
+          title: buildAppbarTitle(context),
+        ),
+        backgroundColor: Colors.white,
+        bottomNavigationBar: buildBottomAppBar(context),
+        body: buildBody(context),
+      ),
     );
   }
 
@@ -199,16 +255,70 @@ class _SelectAddressState extends State<SelectAddress> {
         slivers: [
           SliverList(
               delegate: SliverChildListDelegate([
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: buildShippingInfoList()
-                      
-                ),
-                buildAddOrEditAddress(context),
-                SizedBox(
-                  height: 100,
-                )
-              ]))
+            Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: buildShippingInfoList()),
+            buildOrderNote(context),
+            buildSendAsGift(context),
+            buildAddOrEditAddress(context),
+            SizedBox(
+              height: 100,
+            )
+          ]))
+        ],
+      ),
+    );
+  }
+
+  // order note
+  Widget buildOrderNote(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            height: 100,
+            decoration: BoxDecoration(
+                color: MyTheme.light_grey,
+                borderRadius: BorderRadius.circular(8)),
+            child: TextField(
+              maxLines: 5,
+              decoration: InputDecoration(
+                  border: InputBorder.none,
+                  hintText: "Write your note here",
+                  hintStyle: TextStyle(
+                      color: MyTheme.font_grey,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600),
+                  contentPadding: EdgeInsets.all(16)),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  // send as gift checkbox and unchecked
+  Widget buildSendAsGift(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.only(left: 10, right: 16, bottom: 16),
+      child: Row(
+        children: [
+          Checkbox(
+              value: _sendAsGift,
+              onChanged: (value) {
+                setState(() {
+                  _sendAsGift = value!;
+                });
+              }),
+          Text(
+            "Send as gift",
+            style: TextStyle(
+                color: MyTheme.font_grey,
+                fontSize: 14,
+                fontWeight: FontWeight.w600),
+          )
         ],
       ),
     );
@@ -231,7 +341,9 @@ class _SelectAddressState extends State<SelectAddress> {
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
-              LangText(context).local!.to_add_or_edit_addresses_go_to_address_page,
+              LangText(context)
+                  .local!
+                  .to_add_or_edit_addresses_go_to_address_page,
               style: TextStyle(
                   fontSize: 14,
                   decoration: TextDecoration.underline,
@@ -268,9 +380,9 @@ class _SelectAddressState extends State<SelectAddress> {
           height: 100,
           child: Center(
               child: Text(
-                LangText(context).local!.you_need_to_log_in,
-                style: TextStyle(color: MyTheme.font_grey),
-              )));
+            LangText(context).local!.you_need_to_log_in,
+            style: TextStyle(color: MyTheme.font_grey),
+          )));
     } else if (!_faceData && _shippingAddressList.length == 0) {
       return SingleChildScrollView(
           child: ShimmerHelper()
@@ -295,9 +407,9 @@ class _SelectAddressState extends State<SelectAddress> {
           height: 100,
           child: Center(
               child: Text(
-                LangText(context).local!.no_address_is_added,
-                style: TextStyle(color: MyTheme.font_grey),
-              )));
+            LangText(context).local!.no_address_is_added,
+            style: TextStyle(color: MyTheme.font_grey),
+          )));
     }
   }
 
@@ -307,7 +419,7 @@ class _SelectAddressState extends State<SelectAddress> {
         if (_seleted_shipping_address != _shippingAddressList[index].id) {
           _seleted_shipping_address = _shippingAddressList[index].id;
 
-         // onAddressSwitch();
+          // onAddressSwitch();
         }
         //detectShippingOption();
         setState(() {});
@@ -519,23 +631,22 @@ class _SelectAddressState extends State<SelectAddress> {
     );
   }
 
-
-
   Container buildShippingOptionsCheckContainer(bool check) {
     return check
         ? Container(
-      height: 16,
-      width: 16,
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16.0), color: Colors.green),
-      child: Padding(
-        padding: const EdgeInsets.all(3),
-        child: Icon(Icons.check, color: Colors.white, size: 10),
-      ),
-    )
+            height: 16,
+            width: 16,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16.0), color: Colors.green),
+            child: Padding(
+              padding: const EdgeInsets.all(3),
+              child: Icon(Icons.check, color: Colors.white, size: 10),
+            ),
+          )
         : Container();
   }
 
+// continue_to_delivery_info_ucf
   BottomAppBar buildBottomAppBar(BuildContext context) {
     return BottomAppBar(
       child: Container(
@@ -552,8 +663,7 @@ class _SelectAddressState extends State<SelectAddress> {
                 borderRadius: BorderRadius.circular(0.0),
               ),
               child: Text(
-                LangText(context).local!
-                    .continue_to_delivery_info_ucf,
+                LangText(context).local!.proceed_to_checkout,
                 style: TextStyle(
                     color: Colors.white,
                     fontSize: 16,
@@ -581,7 +691,6 @@ class _SelectAddressState extends State<SelectAddress> {
               child: Row(
                 children: [
                   buildAppbarBackArrow(),
-
                 ],
               ),
             ),
@@ -605,9 +714,9 @@ class _SelectAddressState extends State<SelectAddress> {
       child: Text(
         "${LangText(context).local!.shipping_info}",
         style: TextStyle(
-            fontSize: 16,
-            color: MyTheme.dark_font_grey,
-            fontWeight: FontWeight.bold,
+          fontSize: 16,
+          color: MyTheme.dark_font_grey,
+          fontWeight: FontWeight.bold,
         ),
       ),
     );
@@ -619,102 +728,4 @@ class _SelectAddressState extends State<SelectAddress> {
       child: UsefulElements.backButton(context),
     );
   }
-
-/*
-  Widget buildChooseShippingOption(BuildContext context) {
-    // if(carrier_base_shipping.$){
-    if (true) {
-      return Container(
-        padding: EdgeInsets.symmetric(vertical: 14),
-        width: DeviceInfo(context).width,
-        alignment: Alignment.center,
-        child: Text(
-          "Choose Shipping Area",
-          style: TextStyle(
-              color: MyTheme.dark_grey,
-              fontSize: 14,
-              fontWeight: FontWeight.w700),
-        ),
-      );
-    }
-    return Visibility(
-      visible: pick_up_status.$,
-      child: ScrollToHideWidget(
-        child: Container(
-          color: MyTheme.white,
-          //MyTheme.light_grey,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              buildAddresOption(context),
-              Container(
-                width: 0.5,
-                height: 30,
-                color: MyTheme.grey_153,
-              ),
-              buildPockUpPointOption(context),
-            ],
-          ),
-        ),
-        scrollController: _mainScrollController,
-        childHeight: 40,
-      ),
-    );
-  }*/
-/*
-  FlatButton buildPockUpPointOption(BuildContext context) {
-    return FlatButton(
-      padding: EdgeInsets.zero,
-      onPressed: () {
-        setState(() {
-          changeShippingOption(false);
-        });
-      },
-      child: Container(
-        color: MyTheme.white,
-        alignment: Alignment.center,
-        height: 50,
-        width: (mWidth / 2) - 1,
-        child: Text(
-          LangText(context).local.pickup_point,
-          style: TextStyle(
-              color: _shippingOptionIsAddress
-                  ? MyTheme.medium_grey_50
-                  : MyTheme.dark_grey,
-              fontWeight: !_shippingOptionIsAddress
-                  ? FontWeight.w700
-                  : FontWeight.normal),
-        ),
-      ),
-    );
-  }
-
-
-  FlatButton buildAddresOption(BuildContext context) {
-    return FlatButton(
-      padding: EdgeInsets.zero,
-      onPressed: () {
-        setState(() {
-          changeShippingOption(true);
-        });
-      },
-      child: Container(
-        color: MyTheme.white,
-        height: 50,
-        width: (mWidth / 2) - 1,
-        alignment: Alignment.center,
-        child: Text(
-          LangText(context).local.address_screen_address,
-          style: TextStyle(
-              color: _shippingOptionIsAddress
-                  ? MyTheme.dark_grey
-                  : MyTheme.medium_grey_50,
-              fontWeight: _shippingOptionIsAddress
-                  ? FontWeight.w700
-                  : FontWeight.normal),
-        ),
-      ),
-    );
-  }
-  */
 }
