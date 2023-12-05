@@ -37,8 +37,13 @@ class PaymentRepository {
     return paymentTypeResponseFromJson(response.body);
   }
 
-  Future<dynamic> getOrderCreateResponse(payment_method) async {
-    var post_body = jsonEncode({"payment_type": "${payment_method}"});
+  Future<dynamic> getOrderCreateResponse(
+      payment_method, order_note, isGift) async {
+    var post_body = jsonEncode({
+      "payment_type": "${payment_method}",
+      "additional_info": "${order_note}",
+      "is_gift": "${isGift}"
+    });
 
     String url = ("${AppConfig.BASE_URL}/order/store");
     final response = await ApiRequest.post(
@@ -50,6 +55,8 @@ class PaymentRepository {
         },
         body: post_body,
         middleware: BannedUser());
+
+    print(post_body + "--------------------------------");
 
     return orderCreateResponseFromJson(response.body);
   }

@@ -47,16 +47,18 @@ class _PaytmScreenState extends State<PaytmScreen> {
       if (widget.payment_type == "cart_payment") {
         //print('hello');
         createOrder();
-      }else{
-    paytm();
-
+      } else {
+        paytm();
       }
     });
   }
 
   createOrder() async {
-    var orderCreateResponse = await PaymentRepository()
-        .getOrderCreateResponse(widget.payment_method_key);
+    var orderCreateResponse = await PaymentRepository().getOrderCreateResponse(
+      widget.payment_method_key,
+      "",
+      "",
+    );
 
     if (orderCreateResponse.result == false) {
       ToastComponent.showDialog(orderCreateResponse.message,
@@ -69,7 +71,6 @@ class _PaytmScreenState extends State<PaytmScreen> {
     _order_init = true;
     setState(() {});
     paytm();
-
   }
 
   checkPhoneAvailability() async {
@@ -90,7 +91,8 @@ class _PaytmScreenState extends State<PaytmScreen> {
   @override
   Widget build(BuildContext context) {
     return Directionality(
-      textDirection: app_language_rtl.$! ? TextDirection.rtl : TextDirection.ltr,
+      textDirection:
+          app_language_rtl.$! ? TextDirection.rtl : TextDirection.ltr,
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: buildAppBar(context),

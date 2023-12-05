@@ -52,8 +52,11 @@ class _NagadScreenState extends State<NagadScreen> {
   }
 
   createOrder() async {
-    var orderCreateResponse = await PaymentRepository()
-        .getOrderCreateResponse(widget.payment_method_key);
+    var orderCreateResponse = await PaymentRepository().getOrderCreateResponse(
+      widget.payment_method_key,
+      "",
+      "",
+    );
 
     if (orderCreateResponse.result == false) {
       ToastComponent.showDialog(orderCreateResponse.message,

@@ -42,6 +42,9 @@ class Checkout extends StatefulWidget {
   final double rechargeAmount;
   final String? title;
   var packageId;
+  // get order Note
+  final String? orderNote;
+  bool? sendAsGift;
 
   Checkout(
       {Key? key,
@@ -51,7 +54,9 @@ class Checkout extends StatefulWidget {
       //this.offLinePaymentFor,
       this.rechargeAmount = 0.0,
       this.title,
-      this.packageId = 0})
+      this.packageId = 0,
+      this.orderNote,
+      this.sendAsGift = false})
       : super(key: key);
 
   @override
@@ -274,6 +279,8 @@ class _CheckoutState extends State<Checkout> {
           payment_type: payment_type,
           payment_method_key: _selected_payment_method_key,
           package_id: widget.packageId.toString(),
+          orderNote: widget.orderNote,
+          sendAsGift: widget.sendAsGift,
         );
       })).then((value) {
         onPopped(value);
@@ -1272,95 +1279,81 @@ class _CheckoutState extends State<Checkout> {
     );
   }
 
+// card item
   buildCartSellerItemCard(seller_index, item_index) {
     return Container(
       height: 70,
       decoration: BoxDecorations.buildBoxDecoration_1(),
-      child: Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
-        Container(
-            width: DeviceInfo(context).width! / 4,
-            height: 70,
-            child: ClipRRect(
-                borderRadius: BorderRadius.horizontal(
-                    left: Radius.circular(6), right: Radius.zero),
-                child: FadeInImage.assetNetwork(
-                  placeholder: 'assets/placeholder.png',
-                  image: _shopList[seller_index]
-                      .cartItems[item_index]
-                      .productThumbnailImage,
-                  fit: BoxFit.cover,
-                ))),
-        Container(
-          // color: Colors.red,
-          width: DeviceInfo(context).width! / 1.7,
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 10.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  _shopList[seller_index].cartItems[item_index].productName,
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 2,
-                  style: TextStyle(
-                      color: MyTheme.font_grey,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w400),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        SystemConfig.systemCurrency != null
-                            ? _shopList[seller_index]
-                                .cartItems[item_index]
-                                .price
-                                .replaceAll(SystemConfig.systemCurrency!.code,
-                                    SystemConfig.systemCurrency!.symbol)
-                            : _shopList[seller_index]
-                                .cart_items[item_index]
-                                .price,
-                        textAlign: TextAlign.left,
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 2,
-                        style: TextStyle(
-                            color: MyTheme.accent_color,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700),
+      child: Container(
+        // color: Colors.red,
+        width: DeviceInfo(context).width! / 1.2,
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 10.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                _shopList[seller_index].cartItems[item_index].productName,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 2,
+                style: TextStyle(
+                    color: MyTheme.font_grey,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w400),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      SystemConfig.systemCurrency != null
+                          ? _shopList[seller_index]
+                              .cartItems[item_index]
+                              .price
+                              .replaceAll(SystemConfig.systemCurrency!.code,
+                                  SystemConfig.systemCurrency!.symbol)
+                          : _shopList[seller_index]
+                              .cart_items[item_index]
+                              .price,
+                      textAlign: TextAlign.left,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 2,
+                      style: TextStyle(
+                          color: MyTheme.accent_color,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700),
+                    ),
+                    // show quantity
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Row(
+                        children: [
+                          Text(
+                            AppLocalizations.of(context)!.quantity_ucf +
+                                _shopList[seller_index]
+                                    .cartItems[item_index]
+                                    .quantity
+                                    .toString(),
+                            textAlign: TextAlign.left,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 2,
+                            style: TextStyle(
+                                color: MyTheme.font_grey,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500),
+                          ),
+                        ],
                       ),
-                      // show quantity
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8.0),
-                        child: Row(
-                          children: [
-                            Text(
-                              AppLocalizations.of(context)!.quantity_ucf +
-                                  _shopList[seller_index]
-                                      .cartItems[item_index]
-                                      .quantity
-                                      .toString(),
-                              textAlign: TextAlign.left,
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 2,
-                              style: TextStyle(
-                                  color: MyTheme.font_grey,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
-      ]),
+      ),
     );
   }
 }

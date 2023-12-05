@@ -18,13 +18,17 @@ class StripeScreen extends StatefulWidget {
   String payment_type;
   String? payment_method_key;
   String package_id;
+  String? orderNote;
+  bool? sendAsGift;
 
   StripeScreen(
       {Key? key,
       this.amount = 0.00,
       this.payment_type = "",
       this.payment_method_key = "",
-      this.package_id = "0"})
+      this.package_id = "0",
+      this.orderNote = "",
+      this.sendAsGift = false})
       : super(key: key);
 
   @override
@@ -80,8 +84,8 @@ class _StripeScreenState extends State<StripeScreen> {
   }
 
   createOrder() async {
-    var orderCreateResponse = await PaymentRepository()
-        .getOrderCreateResponse(widget.payment_method_key);
+    var orderCreateResponse = await PaymentRepository().getOrderCreateResponse(
+        widget.payment_method_key, widget.orderNote, widget.sendAsGift);
 
     if (orderCreateResponse.result == false) {
       ToastComponent.showDialog(orderCreateResponse.message,

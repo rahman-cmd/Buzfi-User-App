@@ -16,7 +16,6 @@ import 'package:toast/toast.dart';
 import '../custom/enum_classes.dart';
 import '../repositories/cart_repository.dart';
 import 'checkout.dart';
-import 'payment_method_screen/stripe_screen.dart';
 import 'shipping_info.dart';
 
 class SelectAddress extends StatefulWidget {
@@ -76,6 +75,9 @@ class _SelectAddressState extends State<SelectAddress> {
 
   // send as gift checkbox value
   bool _sendAsGift = false;
+
+  // edit text controller
+  final _orderNoteController = TextEditingController();
 
   //double variables
   double mWidth = 0;
@@ -188,6 +190,8 @@ class _SelectAddressState extends State<SelectAddress> {
       return Checkout(
         title: AppLocalizations.of(context)!.checkout_ucf,
         paymentFor: PaymentFor.Order,
+        orderNote: _orderNoteController.text.trim(),
+        sendAsGift: _sendAsGift,
       );
     })).then((value) {
       onPopped(value);
@@ -283,6 +287,7 @@ class _SelectAddressState extends State<SelectAddress> {
                 color: MyTheme.light_grey,
                 borderRadius: BorderRadius.circular(8)),
             child: TextField(
+              controller: _orderNoteController,
               maxLines: 5,
               decoration: InputDecoration(
                   border: InputBorder.none,

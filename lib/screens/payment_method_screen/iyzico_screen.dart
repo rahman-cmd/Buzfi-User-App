@@ -43,15 +43,17 @@ class _IyzicoScreenState extends State<IyzicoScreen> {
 
     if (widget.payment_type == "cart_payment") {
       createOrder();
-    }else{
-
-    iyzico();
+    } else {
+      iyzico();
     }
   }
 
   createOrder() async {
-    var orderCreateResponse = await PaymentRepository()
-        .getOrderCreateResponse(widget.payment_method_key);
+    var orderCreateResponse = await PaymentRepository().getOrderCreateResponse(
+      widget.payment_method_key,
+      "",
+      "",
+    );
 
     if (orderCreateResponse.result == false) {
       ToastComponent.showDialog(orderCreateResponse.message,
@@ -64,7 +66,6 @@ class _IyzicoScreenState extends State<IyzicoScreen> {
     _order_init = true;
     setState(() {});
     iyzico();
-
   }
 
   iyzico() {
@@ -91,7 +92,8 @@ class _IyzicoScreenState extends State<IyzicoScreen> {
   @override
   Widget build(BuildContext context) {
     return Directionality(
-      textDirection: app_language_rtl.$! ? TextDirection.rtl : TextDirection.ltr,
+      textDirection:
+          app_language_rtl.$! ? TextDirection.rtl : TextDirection.ltr,
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: buildAppBar(context),
