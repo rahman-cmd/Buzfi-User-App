@@ -31,8 +31,8 @@ class WhichFilter {
     return <WhichFilter>[
       WhichFilter(
           'product', AppLocalizations.of(OneContext().context!)!.product_ucf),
-      WhichFilter(
-          'sellers', AppLocalizations.of(OneContext().context!)!.sellers_ucf),
+      // WhichFilter(
+      //     'sellers', AppLocalizations.of(OneContext().context!)!.sellers_ucf),
       WhichFilter(
           'brands', AppLocalizations.of(OneContext().context!)!.brands_ucf),
     ];
@@ -418,7 +418,7 @@ class _FilterState extends State<Filter> {
 
   AppBar buildAppBar(BuildContext context) {
     return AppBar(
-        backgroundColor: Colors.white.withOpacity(0.95),
+        backgroundColor: Color.fromRGBO(0, 113, 238, 1),
         automaticallyImplyLeading: false,
         actions: [
           new Container(),
@@ -707,20 +707,23 @@ class _FilterState extends State<Filter> {
         children: <Widget>[
           IconButton(
             padding: EdgeInsets.zero,
-            icon: UsefulElements.backButton(context),
+            icon: UsefulElements.backButton(context, color: Colors.white),
             onPressed: () => Navigator.of(context).pop(),
           ),
           Container(
             width: MediaQuery.of(context).size.width * .6,
             child: Container(
               child: Padding(
+                  // padding: const EdgeInsets.only(left: 8.0, right: 8.0),
                   padding: MediaQuery.of(context).viewPadding.top >
                           30 //MediaQuery.of(context).viewPadding.top is the statusbar height, with a notch phone it results almost 50, without a notch it shows 24.0.For safety we have checked if its greater than thirty
                       ? const EdgeInsets.symmetric(
-                          vertical: 36.0, horizontal: 0.0)
+                          vertical: 18.0, horizontal: 0.0)
                       : const EdgeInsets.symmetric(
                           vertical: 14.0, horizontal: 0.0),
                   child: TypeAheadField(
+                    suggestionsBoxDecoration: SuggestionsBoxDecoration(
+                        borderRadius: BorderRadius.circular(4.0)),
                     suggestionsCallback: (pattern) async {
                       //return await BackendService.getSuggestions(pattern);
                       var suggestions = await SearchRepository()

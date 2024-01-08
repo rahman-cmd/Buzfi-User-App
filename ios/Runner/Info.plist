@@ -13,7 +13,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>Active Ecommerce Flutter App</string>
+	<string>Buzfi</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -27,8 +27,8 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.googleusercontent.apps.620463100599-ddb91en0ain1g4lim7ub25ced6lm6flr</string>
-				<string>fbXXXXXXXXX</string>
+				<string>com.googleusercontent.apps.128179223373-jnk1p5bgsl2btv8rfbpqujiqtgacpgf4</string>
+				<string>fb158260363989936</string>
 			</array>
 		</dict>
 	</array>
@@ -39,11 +39,11 @@
 	<key>FDMaximumConcurrentTasks</key>
 	<integer>5</integer>
 	<key>FacebookAppID</key>
-    <string>XXXXXXXXX</string>
+    <string>158260363989936</string>
     <key>FacebookClientToken</key>
-    <string>XXXXXXXXX</string>
+    <string>00f91cfcafdf1e56da8fb842cce395fc</string>
     <key>FacebookDisplayName</key>
-    <string>Active Ecommerce</string>
+    <string>Buzfi</string>
 	<key>LSApplicationCategoryType</key>
 	<string></string>
 	<key>LSApplicationQueriesSchemes</key>

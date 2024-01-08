@@ -179,6 +179,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                                             Padding(
                                               padding: const EdgeInsets.only(
                                                   top: 10.0,
+                                                  bottom: 0.0,
                                                   right: 18.0,
                                                   left: 18.0),
                                               child: Text(
@@ -203,7 +204,8 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                               SliverList(
                                 delegate: SliverChildListDelegate(
                                   [
-                                    buildHomeBannerTwo(context, homeData),
+                                    // buildHomeBannerTwo(context, homeData),
+                                    // pare add karte habe
                                   ],
                                 ),
                               ),
@@ -344,61 +346,69 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
           controller: homeData.featuredCategoryScrollController);
     } else if (homeData.featuredCategoryList.length > 0) {
       //snapshot.hasData
-      return GridView.builder(
-          padding:
-              const EdgeInsets.only(left: 18, right: 18, top: 13, bottom: 20),
-          scrollDirection: Axis.horizontal,
-          controller: homeData.featuredCategoryScrollController,
-          itemCount: homeData.featuredCategoryList.length,
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              childAspectRatio: 3 / 2,
-              crossAxisSpacing: 14,
-              mainAxisSpacing: 14,
-              mainAxisExtent: 170.0),
-          itemBuilder: (context, index) {
-            return GestureDetector(
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return CategoryProducts(
-                    category_id: homeData.featuredCategoryList[index].id,
-                    category_name: homeData.featuredCategoryList[index].name,
-                  );
-                }));
-              },
-              child: Container(
-                decoration: BoxDecorations.buildBoxDecoration_1(),
-                child: Row(
-                  children: <Widget>[
-                    Container(
-                        child: ClipRRect(
-                            borderRadius: BorderRadius.horizontal(
-                                left: Radius.circular(6), right: Radius.zero),
-                            child: FadeInImage.assetNetwork(
-                              placeholder: 'assets/placeholder.png',
-                              image:
-                                  homeData.featuredCategoryList[index].banner,
-                              fit: BoxFit.cover,
-                            ))),
-                    Flexible(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          homeData.featuredCategoryList[index].name,
-                          textAlign: TextAlign.left,
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 3,
-                          softWrap: true,
-                          style:
-                              TextStyle(fontSize: 12, color: MyTheme.font_grey),
+      return Scrollbar(
+        thumbVisibility: true,
+        trackVisibility: true,
+        thickness: 6.0,
+        radius: Radius.circular(3.0),
+        scrollbarOrientation: ScrollbarOrientation.bottom,
+        controller: homeData.featuredCategoryScrollController,
+        child: GridView.builder(
+            padding:
+                const EdgeInsets.only(left: 18, right: 18, top: 13, bottom: 20),
+            scrollDirection: Axis.horizontal,
+            controller: homeData.featuredCategoryScrollController,
+            itemCount: homeData.featuredCategoryList.length,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: 3 / 2,
+                crossAxisSpacing: 14,
+                mainAxisSpacing: 14,
+                mainAxisExtent: 170.0),
+            itemBuilder: (context, index) {
+              return GestureDetector(
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return CategoryProducts(
+                      category_id: homeData.featuredCategoryList[index].id,
+                      category_name: homeData.featuredCategoryList[index].name,
+                    );
+                  }));
+                },
+                child: Container(
+                  decoration: BoxDecorations.buildBoxDecoration_1(),
+                  child: Row(
+                    children: <Widget>[
+                      Container(
+                          child: ClipRRect(
+                              borderRadius: BorderRadius.horizontal(
+                                  left: Radius.circular(6), right: Radius.zero),
+                              child: FadeInImage.assetNetwork(
+                                placeholder: 'assets/placeholder.png',
+                                image:
+                                    homeData.featuredCategoryList[index].banner,
+                                fit: BoxFit.cover,
+                              ))),
+                      Flexible(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            homeData.featuredCategoryList[index].name,
+                            textAlign: TextAlign.left,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 3,
+                            softWrap: true,
+                            style: TextStyle(
+                                fontSize: 12, color: MyTheme.font_grey),
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            );
-          });
+              );
+            }),
+      );
     } else if (!homeData.isCategoryInitial &&
         homeData.featuredCategoryList.length == 0) {
       return Container(
@@ -898,26 +908,61 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
 
   AppBar buildAppBar(double statusBarHeight, BuildContext context) {
     return AppBar(
-      automaticallyImplyLeading: false,
-      // Don't show the leading button
-      backgroundColor: Colors.white,
-      centerTitle: false,
-      elevation: 0,
-      flexibleSpace: Padding(
-        // padding:
-        //     const EdgeInsets.only(top: 40.0, bottom: 22, left: 18, right: 18),
-        padding:
-            const EdgeInsets.only(top: 10.0, bottom: 10, left: 18, right: 18),
-        child: GestureDetector(
-          onTap: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) {
-              return Filter();
-            }));
-          },
-          child: buildHomeSearchBox(context),
+        automaticallyImplyLeading: false,
+        // Don't show the leading button
+        backgroundColor: Colors.white,
+        centerTitle: false,
+        elevation: 0,
+        title: Column(
+          children: [
+            Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 8.0),
+                  child: Image.asset(
+                    'assets/app_logo.png', // Replace with your company logo asset path
+                    height: 40, // Set your desired height
+                  ),
+                ),
+                Text(
+                  "BUZFI",
+                  style: TextStyle(
+                      color: Colors.black, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+          ],
         ),
-      ),
-    );
+        // flexibleSpace: Padding(
+        //   // padding:
+        //   //     const EdgeInsets.only(top: 40.0, bottom: 22, left: 18, right: 18),
+        //   padding:
+        //       const EdgeInsets.only(top: 10.0, bottom: 10, left: 18, right: 18),
+        //   child: GestureDetector(
+        //     onTap: () {
+        //       Navigator.push(context, MaterialPageRoute(builder: (context) {
+        //         return Filter();
+        //       }));
+        //     },
+        //     child: buildHomeSearchBox(context),
+        //   ),
+        // ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 18.0),
+            child: GestureDetector(
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return Filter();
+                }));
+              },
+              child: Icon(
+                Icons.search,
+                color: MyTheme.dark_grey,
+              ),
+            ),
+          ),
+        ]);
   }
 
   buildHomeSearchBox(BuildContext context) {

@@ -2751,7 +2751,7 @@ class _ProductDetailsState extends State<ProductDetails>
             aspectRatio: 355 / 375,
             viewportFraction: 1,
             initialPage: 0,
-            autoPlay: true,
+            autoPlay: _productImageList.length > 1 ? true : false,
             autoPlayInterval: Duration(seconds: 5),
             autoPlayAnimationDuration: Duration(milliseconds: 1000),
             autoPlayCurve: Curves.easeInExpo,

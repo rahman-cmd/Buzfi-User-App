@@ -39,6 +39,7 @@ import 'package:toast/toast.dart';
 import '../repositories/auth_repository.dart';
 import 'auction_bidded_products.dart';
 import 'auction_purchase_history.dart';
+import 'cart.dart';
 
 class Profile extends StatefulWidget {
   Profile({Key? key, this.show_back_button = false}) : super(key: key);
@@ -1388,28 +1389,49 @@ class _ProfileState extends State<Profile> {
         borderRadius: BorderRadius.circular(6),
         color: MyTheme.white,
       ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            counter,
-            maxLines: 2,
-            style: TextStyle(
-                fontSize: 16,
-                color: MyTheme.dark_font_grey,
-                fontWeight: FontWeight.w600),
-          ),
-          SizedBox(
-            height: 5,
-          ),
-          Text(
-            title,
-            maxLines: 2,
-            style: TextStyle(
-              color: MyTheme.dark_font_grey,
+      child: GestureDetector(
+        onTap: () {
+          if (title == AppLocalizations.of(context)!.in_your_cart_all_lower) {
+            Navigator.push(context, MaterialPageRoute(builder: (context) {
+              return Cart(has_bottomnav: false);
+            })).then((value) {
+              onPopped(value);
+            });
+          } else if (title ==
+              AppLocalizations.of(context)!.in_your_wishlist_all_lower) {
+            Navigator.push(context, MaterialPageRoute(builder: (context) {
+              return Wishlist();
+            }));
+          } else if (title ==
+              AppLocalizations.of(context)!.your_ordered_all_lower) {
+            Navigator.push(context, MaterialPageRoute(builder: (context) {
+              return OrderList();
+            }));
+          }
+        },
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              counter,
+              maxLines: 2,
+              style: TextStyle(
+                  fontSize: 16,
+                  color: MyTheme.dark_font_grey,
+                  fontWeight: FontWeight.w600),
             ),
-          ),
-        ],
+            SizedBox(
+              height: 5,
+            ),
+            Text(
+              title,
+              maxLines: 2,
+              style: TextStyle(
+                color: MyTheme.dark_font_grey,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

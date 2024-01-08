@@ -102,7 +102,7 @@ class _ProductCardState extends State<ProductCard> {
                                   ? widget.stroked_price!.replaceAll(
                                       SystemConfig.systemCurrency!.code!,
                                       SystemConfig.systemCurrency!.symbol!)
-                                  : widget.stroked_price!,
+                                  : " " + widget.stroked_price!,
                               textAlign: TextAlign.left,
                               overflow: TextOverflow.ellipsis,
                               maxLines: 1,
@@ -123,7 +123,7 @@ class _ProductCardState extends State<ProductCard> {
                             ? widget.main_price!.replaceAll(
                                 SystemConfig.systemCurrency!.code!,
                                 SystemConfig.systemCurrency!.symbol!)
-                            : widget.main_price!,
+                            : " " + widget.main_price!,
                         textAlign: TextAlign.left,
                         overflow: TextOverflow.ellipsis,
                         maxLines: 1,

@@ -15,7 +15,7 @@ import '../data_model/variant_price_response.dart';
 
 class ProductRepository {
   Future<ProductMiniResponse> getFeaturedProducts({page = 1}) async {
-    String url=("${AppConfig.BASE_URL}/products/featured?page=${page}");
+    String url = ("${AppConfig.BASE_URL}/products/featured?page=${page}");
     final response = await ApiRequest.get(url: url, headers: {
       "App-Language": app_language.$!,
       "Currency-Code": SystemConfig.systemCurrency!.code!,
@@ -25,7 +25,7 @@ class ProductRepository {
   }
 
   Future<ProductMiniResponse> getBestSellingProducts() async {
-    String url=("${AppConfig.BASE_URL}/products/best-seller");
+    String url = ("${AppConfig.BASE_URL}/products/best-seller");
     final response = await ApiRequest.get(url: url, headers: {
       "App-Language": app_language.$!,
       "Currency-Code": SystemConfig.systemCurrency!.code!,
@@ -36,7 +36,7 @@ class ProductRepository {
   }
 
   Future<ProductMiniResponse> getTodaysDealProducts() async {
-    String url=("${AppConfig.BASE_URL}/products/todays-deal");
+    String url = ("${AppConfig.BASE_URL}/products/todays-deal");
     final response = await ApiRequest.get(url: url, headers: {
       "App-Language": app_language.$!,
       "Currency-Code": SystemConfig.systemCurrency!.code!,
@@ -47,10 +47,8 @@ class ProductRepository {
     return productMiniResponseFromJson(response.body);
   }
 
-  Future<ProductMiniResponse> getFlashDealProducts(
-      { int? id = 0}) async {
-    String url =
-        ("${AppConfig.BASE_URL}/flash-deal-products/" + id.toString());
+  Future<ProductMiniResponse> getFlashDealProducts({int? id = 0}) async {
+    String url = ("${AppConfig.BASE_URL}/flash-deal-products/" + id.toString());
     final response = await ApiRequest.get(url: url, headers: {
       "App-Language": app_language.$!,
       "Currency-Code": SystemConfig.systemCurrency!.code!,
@@ -61,8 +59,8 @@ class ProductRepository {
   }
 
   Future<ProductMiniResponse> getCategoryProducts(
-      { int? id = 0, name = "", page = 1}) async {
-    String url=("${AppConfig.BASE_URL}/products/category/" +
+      {int? id = 0, name = "", page = 1}) async {
+    String url = ("${AppConfig.BASE_URL}/products/category/" +
         id.toString() +
         "?page=${page}&name=${name}");
     final response = await ApiRequest.get(url: url, headers: {
@@ -75,8 +73,8 @@ class ProductRepository {
   }
 
   Future<ProductMiniResponse> getShopProducts(
-      { int? id = 0, name = "", page = 1}) async {
-    String url=("${AppConfig.BASE_URL}/products/seller/" +
+      {int? id = 0, name = "", page = 1}) async {
+    String url = ("${AppConfig.BASE_URL}/products/seller/" +
         id.toString() +
         "?page=${page}&name=${name}");
 
@@ -90,8 +88,8 @@ class ProductRepository {
   }
 
   Future<ProductMiniResponse> getBrandProducts(
-      { int? id = 0, name = "", page = 1}) async {
-    String url=("${AppConfig.BASE_URL}/products/brand/" +
+      {int? id = 0, name = "", page = 1}) async {
+    String url = ("${AppConfig.BASE_URL}/products/brand/" +
         id.toString() +
         "?page=${page}&name=${name}");
     final response = await ApiRequest.get(url: url, headers: {
@@ -112,7 +110,7 @@ class ProductRepository {
       categories = "",
       min = "",
       max = ""}) async {
-    String url=("${AppConfig.BASE_URL}/products/search" +
+    String url = ("${AppConfig.BASE_URL}/products/search" +
         "?page=${page}&name=${name}&sort_key=${sort_key}&brands=${brands}&categories=${categories}&min=${min}&max=${max}");
 
     print(url.toString());
@@ -128,7 +126,7 @@ class ProductRepository {
   Future<ProductMiniResponse> getDigitalProducts({
     page = 1,
   }) async {
-    String url=("${AppConfig.BASE_URL}/products/digital?page=$page");
+    String url = ("${AppConfig.BASE_URL}/products/digital?page=$page");
     print(url.toString());
 
     final response = await ApiRequest.get(url: url, headers: {
@@ -144,7 +142,7 @@ class ProductRepository {
   Future<ClassifiedAdsResponse> getClassifiedProducts({
     page = 1,
   }) async {
-    String url=("${AppConfig.BASE_URL}/classified/all?page=$page");
+    String url = ("${AppConfig.BASE_URL}/classified/all?page=$page");
     print(url.toString());
 
     final response = await ApiRequest.get(url: url, headers: {
@@ -160,8 +158,7 @@ class ProductRepository {
   Future<ClassifiedAdsResponse> getOwnClassifiedProducts({
     page = 1,
   }) async {
-    String url =
-        ("${AppConfig.BASE_URL}/classified/own-products?page=$page");
+    String url = ("${AppConfig.BASE_URL}/classified/own-products?page=$page");
     final response = await ApiRequest.get(url: url, headers: {
       "App-Language": app_language.$!,
       "Content-Type": "application/json",
@@ -177,8 +174,7 @@ class ProductRepository {
   Future<ClassifiedAdsResponse> getClassifiedOtherAds({
     id = 1,
   }) async {
-    String url =
-        ("${AppConfig.BASE_URL}/classified/related-products/$id");
+    String url = ("${AppConfig.BASE_URL}/classified/related-products/$id");
     print(url.toString());
 
     final response = await ApiRequest.get(url: url, headers: {
@@ -192,7 +188,7 @@ class ProductRepository {
   }
 
   Future<ClassifiedAdsDetailsResponse> getClassifiedProductsDetails(id) async {
-    String url=("${AppConfig.BASE_URL}/classified/product-details/$id");
+    String url = ("${AppConfig.BASE_URL}/classified/product-details/$id");
     print(url.toString());
 
     final response = await ApiRequest.get(url: url, headers: {
@@ -206,10 +202,10 @@ class ProductRepository {
   }
 
   Future<CommonResponse> getDeleteClassifiedProductResponse(id) async {
-    String url=("${AppConfig.BASE_URL}/classified/delete/$id");
+    String url = ("${AppConfig.BASE_URL}/classified/delete/$id");
     print(url.toString());
 
-    final response = await ApiRequest.delete(url:url, headers: {
+    final response = await ApiRequest.delete(url: url, headers: {
       "App-Language": app_language.$!,
       "Content-Type": "application/json",
       "Authorization": "Bearer ${access_token.$}",
@@ -220,11 +216,11 @@ class ProductRepository {
 
   Future<CommonResponse> getStatusChangeClassifiedProductResponse(
       id, status) async {
-    String url=("${AppConfig.BASE_URL}/classified/change-status/$id");
+    String url = ("${AppConfig.BASE_URL}/classified/change-status/$id");
 
     var post_body = jsonEncode({"status": status});
     final response = await ApiRequest.post(
-      url:url,
+      url: url,
       headers: {
         "App-Language": app_language.$!,
         "Content-Type": "application/json",
@@ -236,9 +232,8 @@ class ProductRepository {
     return commonResponseFromJson(response.body);
   }
 
-  Future<ProductDetailsResponse> getProductDetails(
-      { int? id = 0}) async {
-    String url=("${AppConfig.BASE_URL}/products/" + id.toString());
+  Future<ProductDetailsResponse> getProductDetails({int? id = 0}) async {
+    String url = ("${AppConfig.BASE_URL}/products/" + id.toString());
     print(url.toString());
     print(SystemConfig.systemCurrency!.code.toString());
     final response = await ApiRequest.get(url: url, headers: {
@@ -251,9 +246,8 @@ class ProductRepository {
     return productDetailsResponseFromJson(response.body);
   }
 
-  Future<ProductDetailsResponse> getDigitalProductDetails(
-      { int id = 0}) async {
-    String url=("${AppConfig.BASE_URL}/products/" + id.toString());
+  Future<ProductDetailsResponse> getDigitalProductDetails({int id = 0}) async {
+    String url = ("${AppConfig.BASE_URL}/products/" + id.toString());
     print(url.toString());
     final response = await ApiRequest.get(url: url, headers: {
       "App-Language": app_language.$!,
@@ -266,9 +260,8 @@ class ProductRepository {
     return productDetailsResponseFromJson(response.body);
   }
 
-  Future<ProductMiniResponse> getRelatedProducts({ int? id = 0}) async {
-    String url =
-        ("${AppConfig.BASE_URL}/products/related/" + id.toString());
+  Future<ProductMiniResponse> getRelatedProducts({int? id = 0}) async {
+    String url = ("${AppConfig.BASE_URL}/products/related/" + id.toString());
     final response = await ApiRequest.get(url: url, headers: {
       "App-Language": app_language.$!,
       "Currency-Code": SystemConfig.systemCurrency!.code!,
@@ -279,9 +272,9 @@ class ProductRepository {
   }
 
   Future<ProductMiniResponse> getTopFromThisSellerProducts(
-      { int? id = 0}) async {
-    String url=(
-        "${AppConfig.BASE_URL}/products/top-from-seller/" + id.toString());
+      {int? id = 0}) async {
+    String url =
+        ("${AppConfig.BASE_URL}/products/top-from-seller/" + id.toString());
     final response = await ApiRequest.get(url: url, headers: {
       "App-Language": app_language.$!,
       "Currency-Code": SystemConfig.systemCurrency!.code!,
@@ -297,7 +290,7 @@ class ProductRepository {
 
   Future<VariantResponse> getVariantWiseInfo(
       {int? id = 0, color = '', variants = '', qty = 1}) async {
-    String url=("${AppConfig.BASE_URL}/products/variant/price");
+    String url = ("${AppConfig.BASE_URL}/products/variant/price");
 
     var postBody = jsonEncode({
       'id': id.toString(),
@@ -306,8 +299,8 @@ class ProductRepository {
       "quantity": qty
     });
 
-
-    final response = await ApiRequest.post(url:url,
+    final response = await ApiRequest.post(
+        url: url,
         headers: {
           "App-Language": app_language.$!,
           "Content-Type": "application/json",
@@ -317,17 +310,17 @@ class ProductRepository {
         },
         body: postBody);
 
-
     return variantResponseFromJson(response.body);
   }
 
   Future<VariantPriceResponse> getVariantPrice({id, quantity}) async {
-    String url=("${AppConfig.BASE_URL}/varient-price");
+    String url = ("${AppConfig.BASE_URL}/varient-price");
 
     var post_body = jsonEncode({"id": id, "quantity": quantity});
     print(url.toString());
     print(post_body.toString());
-    final response = await ApiRequest.post(url:url,
+    final response = await ApiRequest.post(
+        url: url,
         headers: {
           "App-Language": app_language.$!,
           "Content-Type": "application/json",
@@ -339,6 +332,4 @@ class ProductRepository {
 
     return variantPriceResponseFromJson(response.body);
   }
-
-
 }

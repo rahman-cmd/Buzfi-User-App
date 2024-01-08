@@ -23,7 +23,7 @@ class MiniProductCard extends StatefulWidget {
     this.main_price,
     this.stroked_price,
     this.has_discount,
-    this.is_wholesale=false,
+    this.is_wholesale = false,
     this.discount,
   }) : super(key: key);
 
@@ -83,7 +83,7 @@ class _MiniProductCardState extends State<MiniProductCard> {
                               ? widget.stroked_price!.replaceAll(
                                   SystemConfig.systemCurrency!.code!,
                                   SystemConfig.systemCurrency!.symbol!)
-                              : widget.stroked_price!,
+                              : " " + widget.stroked_price!,
                           maxLines: 1,
                           style: TextStyle(
                               decoration: TextDecoration.lineThrough,
@@ -100,7 +100,7 @@ class _MiniProductCardState extends State<MiniProductCard> {
                         ? widget.main_price!.replaceAll(
                             SystemConfig.systemCurrency!.code!,
                             SystemConfig.systemCurrency!.symbol!)
-                        : widget.main_price!,
+                        : " " + widget.main_price!,
                     maxLines: 1,
                     style: TextStyle(
                         color: MyTheme.accent_color,
@@ -151,7 +151,7 @@ class _MiniProductCardState extends State<MiniProductCard> {
                     ),
                   Visibility(
                     visible: whole_sale_addon_installed.$,
-                    child:  widget.is_wholesale!
+                    child: widget.is_wholesale!
                         ? Container(
                             padding: EdgeInsets.symmetric(
                                 horizontal: 12, vertical: 4),

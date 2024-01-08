@@ -3,23 +3,23 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>620463100599-ach14i3qo4h3pbgsh57hj6c0pc0dnjgg.apps.googleusercontent.com</string>
+	<string>128179223373-jnk1p5bgsl2btv8rfbpqujiqtgacpgf4.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.620463100599-ach14i3qo4h3pbgsh57hj6c0pc0dnjgg</string>
+	<string>com.googleusercontent.apps.128179223373-jnk1p5bgsl2btv8rfbpqujiqtgacpgf4</string>
 	<key>ANDROID_CLIENT_ID</key>
-	<string>620463100599-6ugm9kpt4scqtr7hl4j35c0loe3mga6c.apps.googleusercontent.com</string>
+	<string>128179223373-19g1o2vg70rvapjfph40nl4e1hor5a46.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
-	<string>AIzaSyBbeqHlQdo_R_S59Z2slzGyJ73Tp-dbbNk</string>
+	<string>AIzaSyCvCpbS2oKdrnzyWcyVI5P7G62PqUVPQvA</string>
 	<key>GCM_SENDER_ID</key>
-	<string>620463100599</string>
+	<string>128179223373</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.activeitzone.ecommerceapplesignup</string>
+	<string>com.buzfi.buzfi-user-app</string>
 	<key>PROJECT_ID</key>
-	<string>testproject-43</string>
+	<string>buzfi-6d943</string>
 	<key>STORAGE_BUCKET</key>
-	<string>testproject-43.appspot.com</string>
+	<string>buzfi-6d943.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -31,6 +31,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:620463100599:ios:736cbf21eb3a56fd253332</string>
+	<string>1:128179223373:ios:e40ec57a6430b57f935504</string>
 </dict>
 </plist>
